@@ -41,7 +41,7 @@ pip install semanticlens
 ```python
 import semanticlens as sl
 
-# step 1 - preprocess component-visualizations
+# step 1 - collect component-examples
 
 act_cv = sl.component_visualization.ActivationComponentVisualizer(
     model,

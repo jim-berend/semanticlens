@@ -1,0 +1,54 @@
+[project]
+name = "semanticlens"
+version = "0.1.0"
+description = "A package for mechanistic understanding and validation of large  AI model with SemanticLens"
+readme = "README.md"
+authors = [
+    { name = "Jim Berend", email = "jim.berend@hhi.fraunhofer.de" },
+    { name = "Maximilian Dreyer", email = "maximilian.dreyer@hhi.fraunhofer.de" }
+]
+keywords = ["mechanistic interpretability", "semantic analysis", "foundation model", "deep learning"]
+license = "BSD-3-Clause"
+requires-python = ">=3.11"
+dependencies = [
+    "einops>=0.8.0",
+    "open-clip-torch>=2.30.0",
+    "scikit-learn>=1.6.1",
+    "timm>=1.0.13",
+    "torch>=2.5.1",
+    "transformers>=4.48.0",
+    "zennit-crp>=0.6.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest-cov>=6.0.0",
+    "pytest>=8.3.4",
+    "ipywidgets>=8.1.5",
+    "pre-commit>=4.1.0",
+    "plotly>=6.0.1",
+    "jupyter-scatter>=0.21.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "E",   # By default, Ruff enables Flake8's E and F rules
+    "F",   # Pyflakes - F, pycodestyle - E, W
+    "W",
+    "A",   # flake8-builtins - A
+    "PLC", # Pylint - PLC, PLE, PLW
+    "PLE",
+    "PLW",
+    "I",   # isort - I
+]
+
+
+
+

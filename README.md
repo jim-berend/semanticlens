@@ -92,7 +92,7 @@ Our basic tests are implemented using `pytest`.
 
 ## License
 
-BSD 3-Clause Clear License
+BSD 3-Clause License
 
 
 ### Citation

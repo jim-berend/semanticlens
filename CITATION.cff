@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Berend"
+  given-names: "Jim"
+- family-names: "Dreyer"
+  given-names: "Maximilian"
+title: "SemanticLens Software"
+version: 0.1.0
+doi: 10.5281/zenodo.15233580
+date-released: 2025-04-16
+url: "https://github.com/jim-berend/semanticlens"

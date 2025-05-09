@@ -1,6 +1,6 @@
-from semanticlens.foundation_models.clip import HF_CLIP, OpenCLIP
+from semanticlens.foundation_models.clip import HF_Clip, OpenClip
 
 __all__ = [
-    "OpenCLIP",
-    "HF_CLIP",
+    "OpenClip",
+    "HF_Clip",
 ]

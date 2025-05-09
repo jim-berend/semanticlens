@@ -61,7 +61,7 @@ class HF_Processor(VisionLanguageProcessor):
         return self.preprocess(text=text, return_tensors="pt", padding=True, images=images)
 
 
-class HF_CLIP(VisionLanguageFoundationModel):
+class HF_Clip(VisionLanguageFoundationModel):
     def __init__(self, model_url):
         super().__init__()
         self.model_url = model_url
@@ -97,7 +97,7 @@ class HF_CLIP(VisionLanguageFoundationModel):
         return self.fm(*args, **kwargs)
 
 
-class OpenCLIP(VisionLanguageFoundationModel):
+class OpenClip(VisionLanguageFoundationModel):
     def __init__(self, model_url):
         super().__init__()
         self.model_url = model_url

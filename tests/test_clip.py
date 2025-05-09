@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from semanticlens.foundation_models.clip import HF_CLIP, OpenCLIP
+from semanticlens.foundation_models.clip import HF_Clip, OpenClip
 
 
 def load_dummy_image_via_request():
@@ -31,8 +31,8 @@ def dummy_text():
 @pytest.mark.parametrize(
     "model_class, model_url",
     [
-        (HF_CLIP, "openai/clip-vit-base-patch16"),
-        (OpenCLIP, "hf-hub:apple/MobileCLIP-S2-OpenCLIP"),
+        (HF_Clip, "openai/clip-vit-base-patch16"),
+        (OpenClip, "hf-hub:apple/MobileCLIP-S2-OpenCLIP"),
     ],
 )
 def test_model_initialization(model_class, model_url):
@@ -44,8 +44,8 @@ def test_model_initialization(model_class, model_url):
 @pytest.mark.parametrize(
     "model_class, model_url",
     [
-        (HF_CLIP, "openai/clip-vit-base-patch16"),
-        (OpenCLIP, "hf-hub:apple/MobileCLIP-S2-OpenCLIP"),
+        (HF_Clip, "openai/clip-vit-base-patch16"),
+        (OpenClip, "hf-hub:apple/MobileCLIP-S2-OpenCLIP"),
     ],
 )
 def test_text_encoding(model_class, model_url, dummy_text):
@@ -58,8 +58,8 @@ def test_text_encoding(model_class, model_url, dummy_text):
 @pytest.mark.parametrize(
     "model_class, model_url",
     [
-        (HF_CLIP, "openai/clip-vit-base-patch16"),
-        (OpenCLIP, "hf-hub:apple/MobileCLIP-S2-OpenCLIP"),
+        (HF_Clip, "openai/clip-vit-base-patch16"),
+        (OpenClip, "hf-hub:apple/MobileCLIP-S2-OpenCLIP"),
     ],
 )
 def test_image_encoding(model_class, model_url, dummy_image):
@@ -72,8 +72,8 @@ def test_image_encoding(model_class, model_url, dummy_image):
 @pytest.mark.parametrize(
     "model_class, model_url",
     [
-        (HF_CLIP, "openai/clip-vit-base-patch16"),
-        (OpenCLIP, "hf-hub:apple/MobileCLIP-S2-OpenCLIP"),
+        (HF_Clip, "openai/clip-vit-base-patch16"),
+        (OpenClip, "hf-hub:apple/MobileCLIP-S2-OpenCLIP"),
     ],
 )
 def test_model_device_transfer(model_class, model_url, dummy_text, dummy_image):

@@ -57,6 +57,8 @@ lens = sl.Lens(
     dataset=dataset,
     component_visualizer=act_cv,
     foundation_model=fm,
+    dataset_name="...", # e.g. "imagenet"
+    storage_dir="...", # e.g. "cache"
 )
 lens.compute_semantic_embeddigs(layer_names)
 
@@ -69,7 +71,7 @@ lens.label(
 
 lens.search("watermark") # ("layer4", [63, 21, 362]), ...
 
-lens.evaluate_clarity() # {"layer4" : [[0.64, 0.32, ... ]]}
+lens.eval_clarity() # {"layer4" : [[0.64, 0.32, ... ]]}
 
 ```
 

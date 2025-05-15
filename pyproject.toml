@@ -1,13 +1,18 @@
 [project]
 name = "semanticlens"
-version = "0.1.0"
+version = "0.1.1"
 description = "A package for mechanistic understanding and validation of large  AI model with SemanticLens"
 readme = "README.md"
 authors = [
     { name = "Jim Berend", email = "jim.berend@hhi.fraunhofer.de" },
-    { name = "Maximilian Dreyer", email = "maximilian.dreyer@hhi.fraunhofer.de" }
+    { name = "Maximilian Dreyer", email = "maximilian.dreyer@hhi.fraunhofer.de" },
 ]
-keywords = ["mechanistic interpretability", "semantic analysis", "foundation model", "deep learning"]
+keywords = [
+    "mechanistic interpretability",
+    "semantic analysis",
+    "foundation model",
+    "deep learning",
+]
 license = "BSD-3-Clause"
 requires-python = ">=3.11"
 dependencies = [
@@ -48,7 +53,3 @@ select = [
     "PLW",
     "I",   # isort - I
 ]
-
-
-
-

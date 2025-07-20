@@ -214,7 +214,10 @@ class Lens:
         if not templates:
             return self.fm.encode_text(**self.fm.processor(text=text)).cpu()
 
-        assert isinstance(templates, list)
+        if isinstance(templates, str):
+            templates = [templates]
+        elif not isinstance(templates, list):
+            raise ValueError("templates must be a list or a string")
 
         text = [t.format(text) for t in templates]
         text_embed = self.fm.encode_text(**self.fm.processor(text=text)).cpu()

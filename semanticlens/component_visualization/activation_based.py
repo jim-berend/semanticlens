@@ -68,7 +68,7 @@ class ActivationComponentVisualizer(AbstractComponentVisualizer):
 
     def get_max_reference(self, concept_ids: int | list, layer_name: str, n_ref: int, batch_size: int = 32):
         raise NotImplementedError(
-            "`get_max_reference` is not yet implemented for {self.__class__.__name__} but will be available soon."
+            f"`get_max_reference` is not yet implemented for {self.__class__.__name__} but will be available soon."
         )
         # [ ] TODO act/grad-based cropping lxt like approach?
         # r_range = (0, n_ref) if isinstance(n_ref, int) else n_ref

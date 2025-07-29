@@ -43,13 +43,8 @@ build-backend = "hatchling.build"
 line-length = 120
 
 [tool.ruff.lint]
-select = [
-    "E",   # By default, Ruff enables Flake8's E and F rules
-    "F",   # Pyflakes - F, pycodestyle - E, W
-    "W",
-    "A",   # flake8-builtins - A
-    "PLC", # Pylint - PLC, PLE, PLW
-    "PLE",
-    "PLW",
-    "I",   # isort - I
+ignore = ["F401", "D205", "D200", "D204", "D401"]
+extend-select = [
+    "UP", # pyupgrade
+    "D",  # pydocstyle
 ]

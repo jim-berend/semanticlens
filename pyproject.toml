@@ -14,27 +14,21 @@ keywords = [
     "deep learning",
 ]
 license = "BSD-3-Clause"
-requires-python = ">=3.11"
+requires-python = ">=3.9"
 dependencies = [
-    "einops>=0.8.0",
-    "open-clip-torch>=2.30.0",
+    "einops>=0.8.1",
+    "open-clip-torch>=3.0.0",
     "scikit-learn>=1.6.1",
-    "timm>=1.0.13",
-    "torch>=2.5.1",
-    "transformers>=4.48.0",
+    "timm>=1.0.19",
+    "torch>=2.7.1",
+    "transformers>=4.54.1",
     "zennit-crp>=0.6.0",
 ]
 
 [dependency-groups]
 dev = [
-    "pytest-cov>=6.0.0",
-    "pytest>=8.3.4",
-    "ipywidgets>=8.1.5",
-    "pre-commit>=4.1.0",
-    "plotly>=6.0.1",
-    "jupyter-scatter>=0.21.1",
-    "tox>=4.28.3",
-    "tox-uv>=1.26.2",
+    "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
 ]
 
 [build-system]

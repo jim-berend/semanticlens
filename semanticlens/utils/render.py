@@ -250,7 +250,7 @@ def mystroke(img, size: int, color: str = "black"):
 
 
 @torch.no_grad()
-def crop_and_adjust_images(data_batch, heatmaps, rf=False, alpha=0.4, vis_th=0.02, crop_th=0.01, kernel_size=51):
+def crop_and_mask_images(data_batch, heatmaps, rf=False, alpha=0.4, vis_th=0.02, crop_th=0.01, kernel_size=51):
     """
     Crop and adjust images based on heatmaps.
 

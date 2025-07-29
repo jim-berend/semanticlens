@@ -17,7 +17,7 @@ def mock_model():
 @pytest.fixture
 def mock_dataset():
     # Using a dummy dataset path for testing purposes
-    return ImageFolder("/data/datapool/datasets/ImageNet-complete/val", transform=T.ToTensor())
+    return ImageFolder("data/datasets/ImageNet-complete/val", transform=T.ToTensor())
 
 
 def test_activation_component_visualizer_initialization(mock_model, mock_dataset):

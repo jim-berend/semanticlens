@@ -120,7 +120,7 @@ class OpenClip(VisionLanguageFoundationModel):
 
     @torch.no_grad()
     def encode_vision(self, image: torch.Tensor):
-        """input can be obtained via self.processor(images=image)"""
+        """Input can be obtained via self.processor(images=image)"""
         image = image.unsqueeze(0) if len(image.shape) == 3 else image
         return self.fm.encode_image(image.to(self.device))
 

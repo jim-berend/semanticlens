@@ -1,3 +1,7 @@
+"""
+Image visualization utilities for semantic analysis and heatmap rendering.
+"""
+
 import numpy as np
 import torch
 from crp.image import get_crop_range, imgify
@@ -11,18 +15,20 @@ def vis_lighten_img_border(
     data_batch, heatmaps, rf=False, alpha=0.4, vis_th=0.02, crop_th=0.01, kernel_size=51
 ) -> Image.Image:
     """
+    Visualize Light Image Border.
+
     Draws reference images. The function increases the brightness in regions with relevance lower than
     max(relevance)*vis_th.
     In addition, the reference image can be cropped where relevance is less than max(relevance)*crop_th by setting 'rf'
     to True.
     ↪ The lighten allows to see the mask also in front of black image regions e.g. borders/corners etc.
 
-    Parameters:
+    Parameters
     ----------
     [Same as in the original function]
 
-    Returns:
-    --------
+    Returns
+    -------
     image: list of PIL.Image objects
         If 'rf' is True, reference images have different shapes.
 
@@ -30,7 +36,6 @@ def vis_lighten_img_border(
     ------
     UserWarning: If no masking or cropping is applied to any image in the batch.
     """
-
     if alpha > 1 or alpha < 0:
         raise ValueError("'alpha' must be between [0, 1]")
     if vis_th >= 1 or vis_th < 0:
@@ -95,9 +100,6 @@ def vis_lighten_img_border(
         imgs.append(img.convert("RGB"))
 
     if not any_masked:
-        # warnings.warn("No masking or cropping was applied to any image in the batch. "
-        #               "This may indicate that the visibility threshold (vis_th) is too high "
-        #               "or that there's an issue with the heatmaps.")
         raise AssertionError(
             "No masking or cropping was applied to any image in the batch. "
             "This may indicate that the visibility threshold (vis_th) is too high "
@@ -109,14 +111,16 @@ def vis_lighten_img_border(
 
 @torch.no_grad()
 def vis_opaque_img_border(
-    data_batch, heatmaps, rf=False, alpha=0.4, vis_th=0.02, crop_th=0.01, kernel_size=51
+    data_batch, heatmaps, rf=True, alpha=0.4, vis_th=0.02, crop_th=0.01, kernel_size=51
 ) -> Image.Image:
     """
+    Visualize Dark Image Border.
+
     Draws reference images. The function lowers the opacity in regions with relevance lower than max(relevance)*vis_th.
     In addition, the reference image can be cropped where relevance is less than max(relevance)*crop_th by setting 'rf'
     to True.
 
-    Parameters:
+    Parameters
     ----------
     data_batch: torch.Tensor
         original images from dataset without FeatureVisualization.preprocess() applied to it
@@ -135,13 +139,12 @@ def vis_opaque_img_border(
     kernel_size: scalar
         Parameter of the torchvision.transforms.functional.gaussian_blur function used to smooth the CRP heatmap.
 
-    Returns:
-    --------
+    Returns
+    -------
     image: list of PIL.Image objects
         If 'rf' is True, reference images have different shapes.
 
     """
-
     if alpha > 1 or alpha < 0:
         raise ValueError("'alpha' must be between [0, 1]")
     if vis_th >= 1 or vis_th < 0:
@@ -158,7 +161,7 @@ def vis_opaque_img_border(
         vis_mask = filtered_heat > vis_th
         # imgs.append(imgify(img.detach().cpu()).convert('RGB'))
         # continue
-        if True:
+        if rf:
             row1, row2, col1, col2 = get_crop_range(filtered_heat, crop_th)
 
             dr = row2 - row1
@@ -203,6 +206,35 @@ def vis_opaque_img_border(
 
 
 def mystroke(img, size: int, color: str = "black"):
+    """
+    Apply a stroke effect to an image by detecting edges and drawing ellipses around them.
+    This function creates a stroke effect by first finding edges in the input image,
+    then drawing filled ellipses at edge locations to create an outline effect.
+    The original image is then pasted on top of the stroke layer.
+
+    Parameters
+    ----------
+    img : PIL.Image.Image
+        The input image to apply the stroke effect to. Must be a PIL Image object.
+    size : int
+        The radius of the ellipses used to create the stroke effect. Larger values
+        create thicker strokes.
+    color : str, optional
+        The color of the stroke effect. Accepts "black" for dark strokes or any
+        other value for white strokes. Default is "black".
+
+    Returns
+    -------
+    PIL.Image.Image
+        A new image with the stroke effect applied. The returned image maintains
+        the same mode and dimensions as the input image.
+
+    Notes
+    -----
+    The function uses PIL's FIND_EDGES filter to detect edges and creates
+    semi-transparent ellipses (opacity 180/255) for the stroke effect.
+    Black strokes use RGBA(0, 0, 0, 180) and white strokes use RGBA(255, 255, 255, 180).
+    """
     X, Y = img.size
     edge = img.filter(ImageFilter.FIND_EDGES).load()
     stroke = Image.new(img.mode, img.size, (0, 0, 0, 0))
@@ -219,6 +251,52 @@ def mystroke(img, size: int, color: str = "black"):
 
 @torch.no_grad()
 def crop_and_adjust_images(data_batch, heatmaps, rf=False, alpha=0.4, vis_th=0.02, crop_th=0.01, kernel_size=51):
+    """
+    Crop and adjust images based on heatmaps.
+
+    This function processes a batch of images by applying Gaussian blur to their
+    corresponding heatmaps, cropping the images based on the filtered heatmaps,
+    and converting them to RGB format.
+
+    Parameters
+    ----------
+    data_batch : list or array-like
+        Batch of input images to be processed.
+    heatmaps : list or array-like
+        Corresponding attention heatmaps for each image in the batch.
+    rf : bool, optional
+        Receptive field flag (currently unused), by default False.
+    alpha : float, optional
+        Alpha blending parameter, must be between [0, 1], by default 0.4.
+    vis_th : float, optional
+        Visibility threshold, must be between [0, 1), by default 0.02.
+    crop_th : float, optional
+        Cropping threshold for determining crop boundaries, must be between [0, 1),
+        by default 0.01.
+    kernel_size : int, optional
+        Size of the Gaussian blur kernel, by default 51.
+
+    Returns
+    -------
+    list
+        List of processed PIL Images in RGB format, cropped according to their
+        respective heatmaps.
+
+    Raises
+    ------
+    ValueError
+        If alpha is not between [0, 1].
+    ValueError
+        If vis_th is not between [0, 1).
+    ValueError
+        If crop_th is not between [0, 1).
+
+    Notes
+    -----
+    The function applies Gaussian blur to normalize heatmaps, determines crop
+    boundaries based on the crop threshold, and converts the final images to
+    RGB format for visualization.
+    """
     if alpha > 1 or alpha < 0:
         raise ValueError("'alpha' must be between [0, 1]")
     if vis_th >= 1 or vis_th < 0:
@@ -236,40 +314,8 @@ def crop_and_adjust_images(data_batch, heatmaps, rf=False, alpha=0.4, vis_th=0.0
 
         # Apply cropping based on the heatmap
         row1, row2, col1, col2 = get_crop_range(filtered_heat, crop_th)
-        img = img[..., row1:row2, col1:col2]
-
-        img = imgify(img.detach().cpu()).convert("RGBA")
-        # img_ = np.array(img).copy()
-        # img_[..., 3] = (vis_mask * 255).detach().cpu().numpy().astype(np.uint8)
-        # img_ = mystroke(Image.fromarray(img_), 1, color='black' if outside else 'black')
-        # img.paste(img_, (0, 0), img_)
-        imgs.append(img.convert("RGB"))
-
-    return imgs
-
-
-@torch.no_grad()
-def crop_and_mask_images(
-    data_batch, heatmaps, rf=False, alpha=0, vis_th=0.01, crop_th=0.02, kernel_size=5
-) -> Image.Image:
-    if alpha > 1 or alpha < 0:
-        raise ValueError("'alpha' must be between [0, 1]")
-    if vis_th >= 1 or vis_th < 0:
-        raise ValueError("'vis_th' must be between [0, 1)")
-    if crop_th >= 1 or crop_th < 0:
-        raise ValueError("'crop_th' must be between [0, 1)")
-
-    imgs = []
-    for i in range(len(data_batch)):
-        img = data_batch[i]
-
-        filtered_heat = gaussian_blur(heatmaps[i].unsqueeze(0), kernel_size=kernel_size)[0]
-        filtered_heat = filtered_heat.abs() / (filtered_heat.abs().max())
-        vis_mask = filtered_heat > vis_th
 
         if rf:
-            row1, row2, col1, col2 = get_crop_range(filtered_heat, crop_th)
-
             dr = row2 - row1
             dc = col2 - col1
             if dr > dc:
@@ -285,11 +331,7 @@ def crop_and_mask_images(
                     row2 -= row1
                     row1 = 0
 
-            img_t = img[..., row1:row2, col1:col2]
-            vis_mask_t = vis_mask[row1:row2, col1:col2]
-
-            if img_t.sum() != 0 and vis_mask_t.sum() != 0:
-                img = img_t
+        img = img[..., row1:row2, col1:col2]
 
         img = imgify(img.detach().cpu()).convert("RGBA")
 

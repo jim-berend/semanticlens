@@ -8,8 +8,7 @@ import semanticlens as sl
 class AbstractComponentVisualizer(abc.ABC):
     @abc.abstractmethod
     def get_act_max_sample_ids(self, layer_name: str) -> sl.ConceptTensor:
-        """
-        Should return a tensor of shape (n_components, n_samples) for the given layer name.
+        """Should return a tensor of shape (n_components, n_samples) for the given layer name.
         Where each row holds the data indices of the maximaly activating samples for the repective component.
         """
         ...
@@ -30,15 +29,13 @@ class AbstractComponentVisualizer(abc.ABC):
     @property
     @abc.abstractmethod
     def metadata(self) -> dict:
-        """
-        Returns the metadata of the visualizer.
+        """Returns the metadata of the visualizer.
         Required for caching
         """
         ...
 
     @abc.abstractmethod
     def run(self, *args, **kwargs):
-        """
-        Runs visualizer processing cf. zennit-crp `FeatureVisualizer`.
+        """Runs visualizer processing cf. zennit-crp `FeatureVisualizer`.
         """
         ...

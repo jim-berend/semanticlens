@@ -33,6 +33,8 @@ dev = [
     "pre-commit>=4.1.0",
     "plotly>=6.0.1",
     "jupyter-scatter>=0.21.1",
+    "tox>=4.28.3",
+    "tox-uv>=1.26.2",
 ]
 
 [build-system]
@@ -48,3 +50,6 @@ extend-select = [
     "UP", # pyupgrade
     "D",  # pydocstyle
 ]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"

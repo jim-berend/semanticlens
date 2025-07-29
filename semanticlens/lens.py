@@ -96,17 +96,18 @@ def cache_component_specific_embeddings(method):
 
 
 class Lens:
-    """
-    A class for visual concept analysis and exploration.
+    """A class for visual concept analysis and exploration.
 
     Lens provides methods to embed images and text datasets for semantic analysis.
     It integrates feature visualization (fv) with foundation models (fm) to
     explore relationships between visual concepts and text embeddings.
 
-    Methods:
+    Methods
+    -------
         embed_text_dataset: Embeds a list of text concepts, applying templates if provided.
         embed_text: Embeds a single text prompt.
         embed_image_dataset: Embeds an image dataset using the foundation model.
+
     """
 
     def __init__(
@@ -285,8 +286,7 @@ class Lens:
         dataloader_kwargs: dict = {},
         **kwargs,
     ) -> dict[str, sl.ConceptTensor]:
-        """
-        Compute semantic embeddings for the specified layers.
+        """Compute semantic embeddings for the specified layers.
 
         This method takes a set of layer names and computes semantic embeddings for each layer.
         Two modes are supported:
@@ -302,10 +302,11 @@ class Lens:
             dataloader_kwargs: Additional arguments to pass to the DataLoader
             **kwargs: Additional arguments for component-specific embedding computation
 
-        Returns:
+        Returns
+        -------
             Dictionary mapping layer names to their semantic embeddings as sl.ConceptTensors
-        """
 
+        """
         if component_specific_examples:
             return self.compute_component_specific_embeddings(
                 layer_names=layer_names,

@@ -5,12 +5,15 @@ from sklearn.cluster import KMeans
 
 @torch.inference_mode()
 def clarity_score(V):
-    """Clarity Score: How uniform are the concept examples => how clear is the representation?
+    """Clarity Score.
+    How uniform are the concept examples => how clear is the representation?
     Higher is better in [-1/(n_samples-1), 1]
+
     Args:
         V (torch.Tesnor): (n_neurons) x n_samples x n_features
     Returns:
         torch.Tensor: (n_neurons) x 1
+
     """
     # V.shape = (n_neurons) x n_samples x n_features
     V_nrmed = torch.nn.functional.normalize(V, dim=-1)
@@ -20,11 +23,11 @@ def clarity_score(V):
 
 @torch.inference_mode()
 def redundancy_score(cones):
-    """
-    Args:
+    """Args:
         V (torch.Tesnor): n_neurons x n_features
     Returns:
         torch.Tensor:  (1,) # [ ] allow for intra-redundancy
+
     """
     # TODO this can be done on two levels: 1) within one neuron across the concept examples 2) across the neurons
     # V.shape = (n_neurons) x n_samples x n_features
@@ -40,10 +43,10 @@ def redundancy_score(cones):
 
 @torch.inference_mode()
 def similarity_score(x, y):
-    """
-    Returns
+    """Returns
     -------
     Tensor: Shape (x-n x y-n)
+
     """
     if x.shape != y.shape:
         x_ = torch.nn.functional.normalize(x, dim=-1)

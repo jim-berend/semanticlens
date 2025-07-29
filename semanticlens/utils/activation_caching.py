@@ -1,11 +1,10 @@
-"""
-Helpers to collect, aggregate and cache activations in torch.
-"""
+"""Helpers to collect, aggregate and cache activations in torch."""
 
+from collections import OrderedDict
+from collections.abc import Callable
 from contextlib import contextmanager
 from pathlib import Path
 from pprint import pformat, pprint
-from typing import Callable, OrderedDict
 
 import safetensors.torch
 import torch
@@ -41,9 +40,7 @@ class ActMax:
             self._init_batch_acts_tensor()
 
     def reset(self):
-        """
-        Resets the activations and sample IDs to their initial state.
-        """
+        """Resets the activations and sample IDs to their initial state."""
         self.activations = -torch.zeros(self.n_latents, self.n_collect, dtype=torch.bfloat16)
         self.sample_ids = -torch.ones(self.n_latents, self.n_collect, dtype=torch.int64)
         self.welford = None
@@ -66,19 +63,21 @@ class ActMax:
         )
 
     def update(self, acts, sample_ids, latent_ids=None):
-        """
-        Updates the batch activations and sample IDs with the given activations and sample IDs.
+        """Updates the batch activations and sample IDs with the given activations and sample IDs.
 
         Supports full latent code or only active latents + latent ids
 
-        Parameters:
+        Parameters
+        ----------
             acts [batch_size x n_active/n_latents](torch.Tensor): The activations to update with.
             sample_ids (torch.Tensor): The sample IDs corresponding to the activations.
             latent_ids (torch.Tensor, optional): The latent IDs for scattering the activations. Defaults to None.
-        Returns:
-            None
-        """
 
+        Returns
+        -------
+            None
+
+        """
         if self.batch_size is None:
             self.batch_size = acts.shape[0]
             self._init_batch_acts_tensor()
@@ -206,7 +205,7 @@ class ActCache:
 
     NOTE this is not optimized and memory constrains may be hit.
 
-    Example
+    Example:
     -------
     >>> model = torchvision.models.resnet50(pretrained=True)
     >>> act_cache = ActCache(["layer1", "layer2"])
@@ -217,6 +216,7 @@ class ActCache:
     >>> # retrieve activations
     >>> layer1_activations = act_cache.cache["layer1"]
     >>> layer2_activations = act_cache.cache["layer2"]
+
     """
 
     def __init__(self, layer_names):
@@ -332,7 +332,7 @@ class ActMaxCache(AggregationCache):
 
     See ActCache, CollectCache and ActMax for more details.
 
-    Example
+    Example:
     _______
     >>> model = torchvision.models.resnet50(pretrained=True)
     >>> act_cache = ActMaxCache(["layer1", "layer2"], aggregate_fn="max",n_collect=100)
@@ -358,7 +358,7 @@ class ActMaxCache(AggregationCache):
         self.cache = {name: LazyActMax(n_collect=n_collect) for name in layer_names}
 
     def __repr__(self):
-        """Custom representation to include metadata"""
+        """Custom representation to include metadata."""
         return f"ActMaxCache({pformat(self.cache)})"
 
     def get_hook(self, name):
@@ -391,11 +391,9 @@ class ActMaxCache(AggregationCache):
             # instance is already initialized -> check that the parameters match
             if cls._aggregation_mode != aggregation_fn or cls._n_collect != n_collect or cls.layer_names != layer_names:
                 raise FileNotFoundError(
-                    "Aggregation function {} does not match the stored aggregation function {}.\n".format(
-                        aggregation_fn, cls._aggregation_mode
-                    )
-                    + "n_collect {} does not match the stored n_collect {}.\n".format(n_collect, cls._n_collect)
-                    + "Layer names {} do not match the stored layer names {}.".format(layer_names, cls.layer_names)
+                    f"Aggregation function {aggregation_fn} does not match the stored aggregation function {cls._aggregation_mode}.\n"
+                    + f"n_collect {n_collect} does not match the stored n_collect {cls._n_collect}.\n"
+                    + f"Layer names {layer_names} do not match the stored layer names {cls.layer_names}."
                 )
 
         actmax_cache = cls(layer_names, aggregation_fn=aggregation_fn, n_collect=n_collect)
@@ -407,8 +405,7 @@ class ActMaxCache(AggregationCache):
 
 
 class WelfordAlgorithm:
-    """
-    Online Algorithm for computing
+    """Online Algorithm for computing
     - Mean
     - Variance (sample)
     - Standard Derivation (sample)

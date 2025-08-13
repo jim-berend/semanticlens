@@ -1,19 +1,45 @@
+"""
+Scoring functions for evaluating concept quality in semantic analysis.
+
+This module provides various metrics to assess the quality and characteristics
+of learned concepts in neural networks, including clarity, redundancy, and
+polysemanticity scores.
+"""
+
+import logging
+
 import numpy as np
 import torch
 from sklearn.cluster import KMeans
 
+logger = logging.getLogger(__name__)
+
 
 @torch.inference_mode()
 def clarity_score(V):
-    """Clarity Score.
-    How uniform are the concept examples => how clear is the representation?
-    Higher is better in [-1/(n_samples-1), 1]
+    """
+    Compute clarity score for concept representations.
 
-    Args:
-        V (torch.Tesnor): (n_neurons) x n_samples x n_features
-    Returns:
-        torch.Tensor: (n_neurons) x 1
+    Measures how uniform the concept examples are, indicating how clear
+    the representation is. Higher values indicate better clarity.
 
+    Parameters
+    ----------
+    V : torch.Tensor
+        Concept tensor of shape (n_neurons, n_samples, n_features).
+
+    Returns
+    -------
+    torch.Tensor
+        Clarity scores of shape (n_neurons,). Values in range [-1/(n_samples-1), 1],
+        where higher values indicate clearer concepts.
+
+    Examples
+    --------
+    >>> V = torch.randn(10, 20, 512)  # 10 neurons, 20 samples, 512 features
+    >>> clarity = clarity_score(V)
+    >>> clarity.shape
+    torch.Size([10])
     """
     # V.shape = (n_neurons) x n_samples x n_features
     V_nrmed = torch.nn.functional.normalize(V, dim=-1)
@@ -23,11 +49,29 @@ def clarity_score(V):
 
 @torch.inference_mode()
 def redundancy_score(cones):
-    """Args:
-        V (torch.Tesnor): n_neurons x n_features
-    Returns:
-        torch.Tensor:  (1,) # [ ] allow for intra-redundancy
+    """
+    Compute redundancy score for concept representations.
 
+    Measures the redundancy across neurons by computing pairwise similarities
+    and taking the maximum similarity for each neuron.
+
+    Parameters
+    ----------
+    cones : torch.Tensor
+        Concept tensor of shape (n_neurons, n_features).
+
+    Returns
+    -------
+    torch.Tensor
+        Redundancy scores of shape (n_neurons,). Higher values indicate
+        more redundant representations.
+
+    Examples
+    --------
+    >>> cones = torch.randn(10, 512)  # 10 neurons, 512 features
+    >>> redundancy = redundancy_score(cones)
+    >>> redundancy.shape
+    torch.Size([10])
     """
     # TODO this can be done on two levels: 1) within one neuron across the concept examples 2) across the neurons
     # V.shape = (n_neurons) x n_samples x n_features
@@ -43,10 +87,38 @@ def redundancy_score(cones):
 
 @torch.inference_mode()
 def similarity_score(x, y):
-    """Returns
-    -------
-    Tensor: Shape (x-n x y-n)
+    """
+    Compute similarity score between two tensors.
 
+    Calculates cosine similarity between tensors x and y, handling different
+    tensor shapes appropriately.
+
+    Parameters
+    ----------
+    x : torch.Tensor
+        First tensor for similarity computation.
+    y : torch.Tensor
+        Second tensor for similarity computation.
+
+    Returns
+    -------
+    torch.Tensor
+        Similarity scores. Shape depends on input dimensions.
+        For matrices: (x_n, y_n) where x_n and y_n are the number of vectors.
+        For vectors: scalar similarity score.
+
+    Raises
+    ------
+    ValueError
+        If tensor shapes are incompatible for similarity computation.
+
+    Examples
+    --------
+    >>> x = torch.randn(5, 512)
+    >>> y = torch.randn(3, 512)
+    >>> sim = similarity_score(x, y)
+    >>> sim.shape
+    torch.Size([5, 3])
     """
     if x.shape != y.shape:
         x_ = torch.nn.functional.normalize(x, dim=-1)
@@ -62,7 +134,37 @@ def similarity_score(x, y):
 
 @torch.inference_mode()
 def polysemanticity_score(V, replace_empty_clusters=True, random_state=123, n_clusters=2):
-    # TODO add proper Docstring
+    """
+    Compute polysemanticity score for concept representations.
+
+    Measures how polysemantic (multi-meaning) concepts are by clustering
+    concept examples and computing clarity of cluster centers. Higher values
+    indicate more polysemantic concepts.
+
+    Parameters
+    ----------
+    V : torch.Tensor
+        Concept tensor of shape (n_neurons, n_samples, n_features).
+    replace_empty_clusters : bool, default=True
+        Whether to replace empty clusters with alternative computation.
+    random_state : int, default=123
+        Random seed for K-means clustering reproducibility.
+    n_clusters : int, default=2
+        Number of clusters for K-means algorithm.
+
+    Returns
+    -------
+    torch.Tensor
+        Polysemanticity scores of shape (n_neurons,). Values in range [0, 1],
+        where higher values indicate more polysemantic concepts.
+
+    Examples
+    --------
+    >>> V = torch.randn(10, 20, 512)  # 10 neurons, 20 samples, 512 features
+    >>> poly = polysemanticity_score(V)
+    >>> poly.shape
+    torch.Size([10])
+    """
     # V.shape = (n_neurons) x n_samples x n_features
     device = V.device
 
@@ -73,7 +175,7 @@ def polysemanticity_score(V, replace_empty_clusters=True, random_state=123, n_cl
     poly = 1 - clarity
 
     if replace_empty_clusters:
-        print("replacing empty cluster")
+        logger.debug("replacing empty cluster")
         # retrieve the ones where a cluster has no samples
         counts = [torch.from_numpy(np.unique(c.labels_, return_counts=True)[1]) for c in clusters]
         counts = torch.stack([x if len(x) == n_clusters else torch.zeros(n_clusters) for x in counts], dim=0)

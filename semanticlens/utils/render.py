@@ -10,31 +10,79 @@ from torchvision.transforms.functional import gaussian_blur
 from zennit.core import stabilize
 
 
+def _get_square_crop_box(heatmap: torch.Tensor, crop_th: float) -> tuple[int, int, int, int]:
+    """Calculates a square crop box based on heatmap relevance."""
+    row1, row2, col1, col2 = get_crop_range(heatmap, crop_th)
+
+    dr = row2 - row1
+    dc = col2 - col1
+    if dr > dc:
+        col1 -= (dr - dc) // 2
+        col2 += (dr - dc) // 2
+        if col1 < 0:
+            col2 -= col1
+            col1 = 0
+    elif dc > dr:
+        row1 -= (dc - dr) // 2
+        row2 += (dc - dr) // 2
+        if row1 < 0:
+            row2 -= row1
+            row1 = 0
+
+    return row1, row2, col1, col2
+
+
 @torch.no_grad()
 def vis_lighten_img_border(
     data_batch, heatmaps, rf=False, alpha=0.4, vis_th=0.02, crop_th=0.01, kernel_size=51
 ) -> Image.Image:
     """
-    Visualize Light Image Border.
+    Visualize images with lightened borders based on relevance heatmaps.
 
-    Draws reference images. The function increases the brightness in regions with relevance lower than
-    max(relevance)*vis_th.
-    In addition, the reference image can be cropped where relevance is less than max(relevance)*crop_th by setting 'rf'
-    to True.
-    ↪ The lighten allows to see the mask also in front of black image regions e.g. borders/corners etc.
+    This function creates visualizations by lightening regions with low relevance
+    scores, making high-relevance areas more prominent. It can optionally crop
+    images to focus on relevant regions and applies Gaussian blur for smoothing.
 
     Parameters
     ----------
-    [Same as in the original function]
+    data_batch : torch.Tensor
+        Batch of input images of shape (batch_size, channels, height, width).
+    heatmaps : torch.Tensor
+        Relevance heatmaps of shape (batch_size, height, width).
+    rf : bool, default=False
+        Whether to crop images to the receptive field of relevant regions.
+    alpha : float, default=0.4
+        Blending factor for lightening low-relevance regions. Must be in [0, 1].
+    vis_th : float, default=0.02
+        Visibility threshold for determining relevant regions. Must be in [0, 1).
+    crop_th : float, default=0.01
+        Cropping threshold for receptive field cropping. Must be in [0, 1).
+    kernel_size : int, default=51
+        Kernel size for Gaussian blur smoothing of heatmaps.
 
     Returns
     -------
-    image: list of PIL.Image objects
-        If 'rf' is True, reference images have different shapes.
+    list of PIL.Image
+        List of processed PIL Images with lightened borders and optional cropping.
 
-    Warns:
+    Raises
     ------
-    UserWarning: If no masking or cropping is applied to any image in the batch.
+    ValueError
+        If alpha is not in [0, 1], vis_th not in [0, 1), or crop_th not in [0, 1).
+    AssertionError
+        If no masking or cropping is applied to any image in the batch,
+        which may indicate issues with thresholds or heatmaps.
+
+    Examples
+    --------
+    >>> import torch
+    >>> data = torch.randn(2, 3, 224, 224)
+    >>> heatmaps = torch.randn(2, 224, 224)
+    >>> images = vis_lighten_img_border(data, heatmaps, alpha=0.3)
+    >>> len(images)
+    2
+    >>> type(images[0])
+    <class 'PIL.Image.Image'>
     """
     if alpha > 1 or alpha < 0:
         raise ValueError("'alpha' must be between [0, 1]")
@@ -54,22 +102,7 @@ def vis_lighten_img_border(
         vis_mask = filtered_heat > vis_th
 
         if rf:
-            row1, row2, col1, col2 = get_crop_range(filtered_heat, crop_th)
-
-            dr = row2 - row1
-            dc = col2 - col1
-            if dr > dc:
-                col1 -= (dr - dc) // 2
-                col2 += (dr - dc) // 2
-                if col1 < 0:
-                    col2 -= col1
-                    col1 = 0
-            elif dc > dr:
-                row1 -= (dc - dr) // 2
-                row2 += (dc - dr) // 2
-                if row1 < 0:
-                    row2 -= row1
-                    row1 = 0
+            row1, row2, col1, col2 = _get_square_crop_box(filtered_heat, crop_th)
 
             img_t = img[..., row1:row2, col1:col2]
             vis_mask_t = vis_mask[row1:row2, col1:col2]
@@ -159,25 +192,9 @@ def vis_opaque_img_border(
         filtered_heat = gaussian_blur(heatmaps[i].unsqueeze(0), kernel_size=kernel_size)[0]
         filtered_heat = filtered_heat.abs() / (filtered_heat.abs().max() + 1e-8)
         vis_mask = filtered_heat > vis_th
-        # imgs.append(imgify(img.detach().cpu()).convert('RGB'))
-        # continue
-        if rf:
-            row1, row2, col1, col2 = get_crop_range(filtered_heat, crop_th)
 
-            dr = row2 - row1
-            dc = col2 - col1
-            if dr > dc:
-                col1 -= (dr - dc) // 2
-                col2 += (dr - dc) // 2
-                if col1 < 0:
-                    col2 -= col1
-                    col1 = 0
-            elif dc > dr:
-                row1 -= (dc - dr) // 2
-                row2 += (dc - dr) // 2
-                if row1 < 0:
-                    row2 -= row1
-                    row1 = 0
+        if rf:
+            row1, row2, col1, col2 = _get_square_crop_box(filtered_heat, crop_th)
 
             img_t = img[..., row1:row2, col1:col2]
             vis_mask_t = vis_mask[row1:row2, col1:col2]
@@ -313,23 +330,7 @@ def crop_and_mask_images(data_batch, heatmaps, rf=False, alpha=0.4, vis_th=0.02,
         filtered_heat = filtered_heat.abs() / (filtered_heat.abs().max())
 
         # Apply cropping based on the heatmap
-        row1, row2, col1, col2 = get_crop_range(filtered_heat, crop_th)
-
-        if rf:
-            dr = row2 - row1
-            dc = col2 - col1
-            if dr > dc:
-                col1 -= (dr - dc) // 2
-                col2 += (dr - dc) // 2
-                if col1 < 0:
-                    col2 -= col1
-                    col1 = 0
-            elif dc > dr:
-                row1 -= (dc - dr) // 2
-                row2 += (dc - dr) // 2
-                if row1 < 0:
-                    row2 -= row1
-                    row1 = 0
+        row1, row2, col1, col2 = _get_square_crop_box(filtered_heat, crop_th)
 
         img = img[..., row1:row2, col1:col2]
 

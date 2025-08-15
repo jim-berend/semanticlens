@@ -656,7 +656,8 @@ class ActMaxCache(AggregationCache):
             raise FileNotFoundError(f"Storage directory {storage_dir} does not exist.")
 
         fpaths = [fpath for fpath in storage_dir.glob("*.safetensors") if fpath.stem.startswith(aggregation_fn)]
-        assert fpaths != [], f"No safetensors found for {aggregation_fn} in {storage_dir}"
+        if not fpaths:
+            raise FileNotFoundError(f"No safetensors found for {aggregation_fn} in {storage_dir}")
 
         n_collect = int(fpaths[0].stem.split("-")[2])
         layer_names = [fpath.stem.split("-")[1] for fpath in fpaths]

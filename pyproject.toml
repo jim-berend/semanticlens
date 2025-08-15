@@ -29,6 +29,8 @@ dependencies = [
 dev = [
     "pytest>=8.4.1",
     "pytest-cov>=6.2.1",
+    "tox>=4.28.4",
+    "tox-uv>=1.27.0",
 ]
 
 [build-system]
@@ -39,7 +41,7 @@ build-backend = "hatchling.build"
 line-length = 120
 
 [tool.ruff.lint]
-ignore = ["F401", "D205", "D200", "D204", "D401"]
+ignore = ["D205", "D200", "D204", "D401"]
 extend-select = [
     "UP", # pyupgrade
     "D",  # pydocstyle

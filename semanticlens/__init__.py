@@ -30,12 +30,14 @@ redundancy_score
     Measure concept redundancy across neurons.
 """
 
+from __future__ import annotations
+
 from pathlib import Path
 
 from semanticlens import foundation_models
 from semanticlens._concept_tensor import ConceptTensor
 from semanticlens.cache_setup import memory as _memory_proxy
-from semanticlens.lens import Lens, label
+from semanticlens.lens import Lens
 from semanticlens.scores import clarity_score, polysemanticity_score, redundancy_score
 
 from . import scores
@@ -53,6 +55,7 @@ __all__ = [
 ]
 
 
+# TODO remove!
 def setup_caching(cache_dir: str | Path = "./cache", **kwargs):
     """Enables and configures the caching system for SemanticLens.
 

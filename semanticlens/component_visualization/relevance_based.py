@@ -24,6 +24,9 @@ from semanticlens.utils.render import crop_and_mask_images
 logger = logging.getLogger(__name__)
 
 
+# NOTE this is currently broken and under heavy development! FIXME
+
+
 class RelevanceComponentVisualizer(FeatureVisualization, AbstractComponentVisualizer):
     """
     Component visualizer using relevance-based attribution methods.

@@ -6,95 +6,125 @@ and their processors, providing a consistent interface for different model
 implementations.
 """
 
-import abc
+from abc import ABC, abstractmethod
 
-from torch.nn import Module
+import torch
 
 
-class VisionLanguageFoundationModel(Module, abc.ABC):
+class VisionLanguageFoundationModel(ABC):
     """
     Abstract base class for vision-language foundation models.
 
     This class defines the interface that all vision-language foundation models
     must implement, providing methods for encoding both vision and text inputs.
-
-    Methods
-    -------
-    encode_vision(*args, **kwargs)
-        Encode visual inputs into embeddings.
-    encode_text(*args, **kwargs)
-        Encode text inputs into embeddings.
+    # TODO cleanup!
     """
 
-    @abc.abstractmethod
-    def encode_vision(self, *args, **kwargs):
+    @abstractmethod
+    def encode_image(self, *args, **kwargs):
         """
-        Encode visual inputs into embeddings.
+        Encode image input into feature representation.
 
         Parameters
         ----------
         *args
-            Variable length argument list for visual inputs.
+            Variable length argument list for image inputs.
         **kwargs
-            Arbitrary keyword arguments for visual encoding.
+            Arbitrary keyword arguments for encoding options.
 
         Returns
         -------
         torch.Tensor
-            Visual embeddings.
+            Encoded image features.
         """
-        ...
+        pass
 
-    @abc.abstractmethod
+    @abstractmethod
     def encode_text(self, *args, **kwargs):
         """
-        Encode text inputs into embeddings.
+        Encode text input into feature representation.
 
         Parameters
         ----------
         *args
             Variable length argument list for text inputs.
         **kwargs
-            Arbitrary keyword arguments for text encoding.
+            Arbitrary keyword arguments for encoding options.
 
         Returns
         -------
         torch.Tensor
-            Text embeddings.
+            Encoded text features.
         """
-        ...
+        pass
 
-
-class VisionLanguageProcessor(abc.ABC):
-    """
-    Abstract base class for vision-language processors.
-
-    This class defines the interface for preprocessing vision and text inputs
-    for foundation models.
-
-    Methods
-    -------
-    __call__(*, images, text, **kwargs)
-        Process images and/or text inputs.
-    """
-
-    @abc.abstractmethod
-    def __call__(self, *, images, text, **kwargs):
+    @abstractmethod
+    def preprocess(
+        self, img: torch.Tensor
+    ):  # TODO type hinting not entirely correct since we except list and pil images later ! remove or replace.
         """
-        Process images and/or text inputs for model consumption.
+        Preprocess image input for model consumption.
+
+        # TODO make clear that device and dimension-expansion should also happen here
 
         Parameters
         ----------
-        images : optional
-            Image data to be processed.
-        text : optional
-            Text data to be processed.
-        **kwargs
-            Additional processing arguments.
+        img : torch.Tensor
+            Input image tensor to preprocess.
 
         Returns
         -------
-        dict
-            Processed inputs ready for model consumption.
+        torch.Tensor
+            Preprocessed image tensor ready for model input.
+        """
+        pass
+
+    @abstractmethod
+    def tokenize(self, txt: str):
+        """
+        Tokenize text input for model consumption.
+
+        # TODO see preprocess todos.
+
+        Parameters
+        ----------
+        txt : str
+            Input text string to tokenize.
+
+        Returns
+        -------
+        torch.Tensor
+            Tokenized text tensor ready for model input.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def device(self):
+        """
+        Get the device on which the model is located.
+
+        Returns
+        -------
+        torch.device
+            The device (CPU/GPU) on which the model parameters are located.
+        """
+        # return next(self.model.parameters()).device
+        ...
+
+    @abstractmethod
+    def to(self, device):
+        """
+        Move the model to the specified device.
+
+        Parameters
+        ----------
+        device : str or torch.device
+            The target device to move the model to (e.g., 'cpu', 'cuda:0').
+
+        Returns
+        -------
+        VisionLanguageFoundationModel
+            The model instance after moving to the specified device.
         """
         ...

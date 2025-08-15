@@ -6,6 +6,8 @@ metadata storage capabilities, enabling rich semantic information to be preserve
 alongside tensor data.
 """
 
+from __future__ import annotations
+
 import json
 import logging
 

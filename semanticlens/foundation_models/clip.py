@@ -1,475 +1,277 @@
 """
-CLIP model implementations for vision-language foundation models.
+CLIP model implementations for vision-language tasks.
 
-This module provides implementations of CLIP models from different sources:
-OpenCLIP and Hugging Face transformers, along with their processors.
+This module provides concrete implementations of various CLIP model variants,
+including OpenCLIP, SigLIP V2, and MobileCLIP models for encoding both
+images and text into a shared embedding space.
+
+# TODO refine
+
+Classes
+-------
+OpenClip : VisionLanguageFoundationModel
+    OpenCLIP implementation supporting various model architectures.
+SigLipV2 : OpenClip
+    SigLIP V2 model implementation.
+ClipMobile : OpenClip
+    MobileCLIP model implementation optimized for mobile deployment.
 """
 
-import open_clip
+from __future__ import annotations
+
 import torch
-from transformers import CLIPModel, CLIPProcessor
+from PIL import Image
 
-from semanticlens.foundation_models.base import VisionLanguageFoundationModel, VisionLanguageProcessor
-
-
-class TorchDict(dict):
-    """
-    Dictionary subclass that can move tensor values to specified device.
-
-    This utility class extends dict to provide a `to` method that moves
-    all tensor values to a specified device while preserving non-tensor values.
-
-    Methods
-    -------
-    to(device)
-        Move all tensor values to the specified device.
-    """
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def to(self, device):
-        """
-        Move all tensor values to the specified device.
-
-        Parameters
-        ----------
-        device : torch.device or str
-            Target device for tensor values.
-
-        Returns
-        -------
-        TorchDict
-            New dictionary with tensors moved to target device.
-        """
-        new_dict = TorchDict()
-        for key, value in self.items():
-            if isinstance(value, torch.Tensor):
-                new_dict[key] = value.to(device)
-            else:
-                new_dict[key] = value
-        return new_dict
-
-
-#  fm2.encode_text(**fm2.processor(text=["a photo of a cat", "a photo of a dog"], return_tensors="pt", padding=True))
-class OpenClipProcessor(VisionLanguageProcessor):
-    """
-    Processor for OpenCLIP models.
-
-    Handles preprocessing of images and text for OpenCLIP models,
-    including tokenization and image preprocessing.
-
-    Parameters
-    ----------
-    preprocess : callable
-        Image preprocessing function from OpenCLIP.
-    tokenizer : callable
-        Text tokenizer from OpenCLIP.
-    context_length : int, optional
-        Maximum context length for text tokenization.
-    device : str or torch.device, optional
-        Device for tensor operations. Default is "cpu".
-
-    Methods
-    -------
-    to(device)
-        Move processor to specified device.
-    __call__(images=None, text=None, **kwargs)
-        Process images and/or text inputs.
-    """
-
-    def __init__(self, preprocess, tokenizer, context_length=None, device=None):
-        self.preprocess = preprocess
-        self.tokenizer = tokenizer
-        self.device = "cpu" if device is None else device
-        self.context_length = context_length
-
-    def to(self, device):
-        """
-        Move processor to specified device.
-
-        Parameters
-        ----------
-        device : str or torch.device
-            Target device.
-        """
-        self.device = device
-
-    def __call__(self, images=None, text=None, **kwargs):
-        """
-        Process images and/or text inputs for OpenCLIP model.
-
-        Parameters
-        ----------
-        images : PIL.Image or list of PIL.Image, optional
-            Input images to process.
-        text : str or list of str, optional
-            Input text to tokenize.
-        **kwargs
-            Additional processing arguments.
-
-        Returns
-        -------
-        TorchDict
-            Dictionary containing processed inputs with keys 'image' and/or 'text'.
-
-        Raises
-        ------
-        AssertionError
-            If neither images nor text is provided.
-        """
-        outputs = TorchDict()
-        assert images is not None or text is not None, "Either images or text must be provided"
-
-        if images:
-            if isinstance(images, list):
-                images = torch.stack([self.preprocess(img) for img in images]).to(self.device)
-            else:
-                images = self.preprocess(images).to(self.device)
-            outputs["image"] = images
-            # outputs["pixel_values"] = images  # for compatibility with huggingface
-        if text is not None:
-            texts = self.tokenizer(
-                text, **({"context_length": self.context_length} if self.context_length is not None else {})
-            ).to(self.device)
-            outputs["text"] = texts
-
-        return outputs
-
-
-# TODO profile best performance
-
-
-class HF_Processor(VisionLanguageProcessor):
-    """
-    Processor for Hugging Face CLIP models.
-
-    Wraps Hugging Face CLIPProcessor for consistent interface.
-
-    Parameters
-    ----------
-    preprocess : CLIPProcessor
-        Hugging Face CLIP processor instance.
-
-    Methods
-    -------
-    __call__(images=None, text=None, **kwargs)
-        Process images and/or text using HF processor.
-    """
-
-    def __init__(self, preprocess):
-        self.preprocess = preprocess
-
-    def __call__(self, images=None, text=None, **kwargs):
-        """
-        Process inputs using Hugging Face CLIP processor.
-
-        Parameters
-        ----------
-        images : optional
-            Input images.
-        text : optional
-            Input text.
-        **kwargs
-            Additional arguments passed to the processor.
-
-        Returns
-        -------
-        dict
-            Processed inputs from HF processor.
-        """
-        return self.preprocess(text=text, return_tensors="pt", padding=True, images=images)
-
-
-class HF_Clip(VisionLanguageFoundationModel):
-    """
-    Hugging Face CLIP model implementation.
-
-    Wraps Hugging Face CLIP models to provide consistent interface
-    for vision-language foundation models.
-
-    Parameters
-    ----------
-    model_url : str
-        Hugging Face model identifier or path.
-
-    Attributes
-    ----------
-    model_url : str
-        The model identifier.
-    fm : CLIPModel
-        The underlying Hugging Face CLIP model.
-
-    Properties
-    ----------
-    name : str
-        Normalized model name for identification.
-    processor : HF_Processor
-        Processor for input preprocessing.
-    device : torch.device
-        Current device of the model.
-
-    Methods
-    -------
-    encode_vision(*args, **kwargs)
-        Encode visual inputs into embeddings.
-    encode_text(*args, **kwargs)
-        Encode text inputs into embeddings.
-    forward(*args, **kwargs)
-        Forward pass through the model.
-    """
-
-    def __init__(self, model_url):
-        super().__init__()
-        self.model_url = model_url
-        self.fm = CLIPModel.from_pretrained(model_url)
-        self._processor = HF_Processor(CLIPProcessor.from_pretrained(model_url))  # TODO unify with OpenClipProcessor
-        self.fm.eval()
-
-    @property
-    def name(self):
-        """
-        Get normalized model name.
-
-        Returns
-        -------
-        str
-            Model name with special characters replaced by underscores.
-        """
-        return self.model_url.replace("/", "_").replace("-", "_")
-
-    @property
-    def processor(self):
-        """
-        Get the model processor.
-
-        Returns
-        -------
-        HF_Processor
-            Processor instance for input preprocessing.
-        """
-        return self._processor
-
-    @property
-    def device(self):
-        """
-        Get current device of the model.
-
-        Returns
-        -------
-        torch.device
-            Current device where model parameters are located.
-        """
-        return next(self.parameters()).device
-
-    @torch.no_grad()
-    def encode_vision(self, *args, **kwargs):
-        """
-        Encode visual inputs into embeddings.
-
-        Automatically moves inputs to model device before encoding.
-
-        Parameters
-        ----------
-        *args
-            Positional arguments for vision encoding.
-        **kwargs
-            Keyword arguments for vision encoding.
-
-        Returns
-        -------
-        torch.Tensor
-            Visual embeddings from the model.
-        """
-        args = [arg.to(self.device) if isinstance(arg, torch.Tensor) else arg for arg in args]
-        kwargs = {k: v.to(self.device) if isinstance(v, torch.Tensor) else v for k, v in kwargs.items()}
-        return self.fm.get_image_features(*args, **kwargs)
-
-    @torch.no_grad()
-    def encode_text(self, *args, **kwargs):
-        """
-        Encode text inputs into embeddings.
-
-        Automatically moves inputs to model device before encoding.
-
-        Parameters
-        ----------
-        *args
-            Positional arguments for text encoding.
-        **kwargs
-            Keyword arguments for text encoding.
-
-        Returns
-        -------
-        torch.Tensor
-            Text embeddings from the model.
-        """
-        args = [arg.to(self.device) if isinstance(arg, torch.Tensor) else arg for arg in args]
-        kwargs = {k: v.to(self.device) if isinstance(v, torch.Tensor) else v for k, v in kwargs.items()}
-        return self.fm.get_text_features(*args, **kwargs)
-
-    def forward(self, *args, **kwargs):
-        """
-        Forward pass through the CLIP model.
-
-        Parameters
-        ----------
-        *args
-            Positional arguments for forward pass.
-        **kwargs
-            Keyword arguments for forward pass.
-
-        Returns
-        -------
-        CLIPOutput
-            Output from the CLIP model.
-        """
-        return self.fm(*args, **kwargs)
+from semanticlens.foundation_models.base import VisionLanguageFoundationModel
 
 
 class OpenClip(VisionLanguageFoundationModel):
     """
-    OpenCLIP model implementation.
+    OpenCLIP vision-language model implementation.
 
-    Wraps OpenCLIP models to provide consistent interface
-    for vision-language foundation models.
+    This class provides a concrete implementation of the VisionLanguageFoundationModel
+    abstract base class using OpenCLIP models. It supports encoding images and text
+    into a shared embedding space for various vision-language tasks.
 
     Parameters
     ----------
-    model_url : str
-        OpenCLIP model identifier.
+    url : str
+        The model URL or identifier for OpenCLIP model loading.
+    device : str, optional
+        The device to load the model on, by default "cpu".
 
     Attributes
     ----------
-    model_url : str
-        The model identifier.
-    fm : torch.nn.Module
-        The underlying OpenCLIP model.
-
-    Properties
-    ----------
-    name : str
-        Normalized model name for identification.
-    processor : OpenClipProcessor
-        Processor for input preprocessing.
-    device : torch.device
-        Current device of the model.
-
-    Methods
-    -------
-    encode_vision(image)
-        Encode visual inputs into embeddings.
-    encode_text(text)
-        Encode text inputs into embeddings.
-    forward(*args, **kwargs)
-        Forward pass through the model.
+    model : torch.nn.Module
+        The loaded OpenCLIP model.
+    preprocessor : callable
+        Image preprocessing function.
+    tokenizer : callable
+        Text tokenization function.
     """
 
-    def __init__(self, model_url):
-        super().__init__()
-        self.model_url = model_url
-        model, preprocess = open_clip.create_model_from_pretrained(model_url)
-        tokenizer = open_clip.get_tokenizer(model_url)
-        self.fm = model
-        self._processor = OpenClipProcessor(preprocess, tokenizer)
+    def __init__(self, url, device="cpu"):
+        import open_clip
 
-    @property
-    def name(self):
-        """
-        Get normalized model name.
+        model, _, preprocess = open_clip.create_model_and_transforms(
+            url,
+        )
+        tokenizer = open_clip.get_tokenizer(url)
 
-        Returns
-        -------
-        str
-            Model name with special characters replaced by underscores.
-        """
-        return self.model_url.replace("/", "_").replace("-", "_")
+        self.model = model.eval().to(device)
 
-    @property
-    def processor(self):
-        """
-        Get the model processor.
-
-        Returns
-        -------
-        OpenClipProcessor
-            Processor instance for input preprocessing.
-        """
-        return self._processor
+        self.preprocessor = preprocess
+        self.tokenizer = tokenizer
 
     @property
     def device(self):
         """
-        Get current device of the model.
+        Get the device on which the model is located.
 
         Returns
         -------
         torch.device
-            Current device where model parameters are located.
+            The device (CPU/GPU) on which the model parameters are located.
         """
-        return next(self.parameters()).device
+        return next(self.model.parameters()).device
 
-    @torch.no_grad()
-    def encode_vision(self, image: torch.Tensor):
+    def to(self, device):
         """
-        Encode visual inputs into embeddings.
+        Move the model to the specified device.
 
         Parameters
         ----------
-        image : torch.Tensor
-            Input image tensor. Can be obtained via self.processor(images=image).
-            If 3D tensor, will be unsqueezed to add batch dimension.
+        device : str or torch.device
+            The target device to move the model to (e.g., 'cpu', 'cuda:0').
+
+        Returns
+        -------
+        torch.nn.Module
+            The model instance after moving to the specified device.
+        """
+        return self.model.to(device)
+
+    def encode_image(self, img: torch.Tensor):
+        """
+        Encode an image tensor into features.
+
+        Parameters
+        ----------
+        img : torch.Tensor
+            Input image tensor.
 
         Returns
         -------
         torch.Tensor
-            Visual embeddings from the model.
-
-        Notes
-        -----
-        Input can be obtained via self.processor(images=image)
+            Encoded image features.
         """
-        image = image.unsqueeze(0) if len(image.shape) == 3 else image
-        return self.fm.encode_image(image.to(self.device))
+        with torch.no_grad():
+            return self.model.encode_image(img)
 
-    @torch.no_grad()
-    def encode_text(self, text: torch.Tensor):
+    def encode_text(self, text_input: torch.Tensor):
         """
-        Encode text inputs into embeddings.
+        Encode a text tensor into features.
 
         Parameters
         ----------
-        text : torch.Tensor
-            Tokenized text tensor. Automatically moved to model device.
+        text_input : torch.Tensor
+            Input text tensor.
 
         Returns
         -------
         torch.Tensor
-            Text embeddings from the model.
-
-        Examples
-        --------
-        >>> processor_output = model.processor(text="hello")
-        >>> embeddings = model.encode_text(processor_output['text'])
+            Encoded text features.
         """
-        # fm2.encode_text(fm2.processor(text="hallo")['text'])
-        text = text.to(self.device)
-        return self.fm.encode_text(text)
+        with torch.no_grad():
+            return self.model.encode_text(text_input)
 
-    def forward(self, *args, **kwargs):
+    def preprocess(self, img: Image.Image | list[Image.Image]) -> torch.Tensor:
         """
-        Forward pass through the OpenCLIP model.
+        Apply foundation model image preprocessing.
+
+        Preprocesses images for model consumption, handling both single images
+        and lists of images. Also handles tensor dimension expansion and device
+        placement automatically.
 
         Parameters
         ----------
-        *args
-            Positional arguments for forward pass.
-        **kwargs
-            Keyword arguments for forward pass.
+        img : Image.Image or list[Image.Image]
+            Input image(s) to preprocess. Can be a single PIL Image or a list
+            of PIL Images.
 
         Returns
         -------
-        torch.Tensor or tuple
-            Output from the OpenCLIP model.
+        torch.Tensor
+            Preprocessed image tensor(s) ready for model input, moved to the
+            correct device with proper batch dimensions.
         """
-        return self.fm(*args, **kwargs)
+        if isinstance(img, list):
+            img_inputs = torch.stack([self.preprocessor(image) for image in img])
+        else:
+            img_inputs = self.preprocessor(img)
+        if img_inputs.ndim == 3:
+            img_inputs = img_inputs.unsqueeze(0)
+        return img_inputs.to(self.device)
+
+    def tokenize(self, txt: str, context_length=None):
+        """
+        Tokenize a text string and move to the correct device.
+
+        Converts input text into tokenized format suitable for the model,
+        automatically moving the result to the model's device.
+
+        Parameters
+        ----------
+        txt : str
+            Input text string to tokenize.
+        context_length : int, optional
+            Maximum context length for tokenization. If None, uses the
+            model's default context length.
+
+        Returns
+        -------
+        torch.Tensor
+            Tokenized text tensor ready for model input, on the correct device.
+        """
+        context_length = context_length or self.model.context_length
+        text_inputs = self.tokenizer(txt, context_length=context_length)
+        return text_inputs.to(self.device)
+
+
+class SigLipV2(OpenClip):
+    """
+    SigLIP V2 vision-language model implementation.
+
+    A specialized OpenCLIP implementation using the SigLIP V2 model architecture
+    optimized for improved vision-language understanding.
+
+    Parameters
+    ----------
+    device : str, optional
+        The device to load the model on, by default "cpu".
+
+    Attributes
+    ----------
+    URL : str
+        The model identifier for SigLIP V2 model loading.
+    """
+
+    URL = "hf-hub:timm/ViT-B-16-SigLIP2"
+
+    def __init__(self, device="cpu"):
+        super().__init__(url=self.URL, device=device)
+
+
+class ClipMobile(OpenClip):
+    """
+    MobileCLIP vision-language model implementation.
+
+    A specialized OpenCLIP implementation using MobileCLIP models optimized
+    for mobile deployment with efficient inference while maintaining performance.
+
+    Parameters
+    ----------
+    version : str, optional
+        The MobileCLIP version to use ('s1' or 's2'), by default "s1".
+    device : str, optional
+        The device to load the model on, by default "cpu".
+
+    Attributes
+    ----------
+    URLs : dict
+        Dictionary mapping version names to model identifiers.
+    """
+
+    URLs = dict(s1="MobileCLIP-S1", s2="MobileCLIP-S2")
+
+    def __init__(self, version="s1", device="cpu"):
+        import open_clip
+
+        model, _, preprocess = open_clip.create_model_and_transforms(self.URLs[version], pretrained="datacompdr")
+        tokenizer = open_clip.get_tokenizer(self.URLs[version])
+
+        self.model = model.eval().to(device)
+
+        self.preprocessor = preprocess
+        self.tokenizer = tokenizer
+
+    @staticmethod
+    def _test():
+        # TODO (re)move!
+        def load_dummy_image_via_request():
+            # Load a dummy image from the internet
+            from io import BytesIO
+
+            import requests
+            # from PIL import Image
+
+            url = "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png"
+            response = requests.get(url)
+            img = Image.open(BytesIO(response.content))
+
+            return img.convert("RGB")
+
+        model = ClipMobile(use_half=True, device="cpu", version="s1")
+        img = load_dummy_image_via_request()
+        text = ["This is a test sentence.", "one di", "two dice", "three dice"]
+
+        text_input = model.tokenize(text)
+        img_input = model.preprocess(img).unsqueeze(0)  # Add batch dimension
+
+        img_features = model.encode_image(img_input)
+        text_features = model.encode_text(text_input)
+
+        scores = img_features @ text_features.T
+
+        print("-" * 80)
+        print("Testing CLIP MobileS model")
+        print("-" * 80)
+        print("texts", text)
+        print("Scores shape:", scores)
+        if scores.argmax() == text.index("three dice"):
+            print("Correctly identified the last text as the best match.")
+        else:
+            print("Did not identify the last text as the best match.")
+
+        print("Image features shape:", img_features.shape)
+        print("Text features shape:", text_features.shape)

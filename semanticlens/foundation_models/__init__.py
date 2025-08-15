@@ -6,15 +6,9 @@ currently supporting various CLIP model variants from different sources.
 
 Classes
 -------
-OpenClip
-    OpenCLIP model implementation.
-HF_Clip
-    Hugging Face CLIP model implementation.
+
 """
 
-from semanticlens.foundation_models.clip import HF_Clip, OpenClip
+from semanticlens.foundation_models.clip import ClipMobile, OpenClip, SigLipV2
 
-__all__ = [
-    "OpenClip",
-    "HF_Clip",
-]
+__all__ = ["OpenClip", "ClipMobile", "SigLipV2"]

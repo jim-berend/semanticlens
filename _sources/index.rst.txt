@@ -1,12 +1,16 @@
 SemanticLens Documentation
 ==========================
 
-.. image:: _static/logo-with-name_big.svg
-   :width: 400px
-   :align: center
-   :alt: SemanticLens logo
+.. raw:: html
 
-An open-source PyTorch library for interpreting and validating large vision models.
+   <div align="center">
+   <img src="_static/logo-with-name_big.svg" width="400px" alt="SemanticLens logo" align="center" />
+   <p>
+   An open-source PyTorch library for interpreting and validating large vision models.
+   <br>
+   Read the paper now as part of <a href="https://www.nature.com/articles/s42256-025-01084-w">Nature Machine Intelligence</a> (Open Access).
+   </p>
+   </div>
 
 .. raw:: html
 
@@ -124,3 +128,26 @@ Basic usage:
    contributing
    license
 
+Citation
+--------
+
+If you use SemanticLens in your research, please cite our paper:
+
+.. code-block:: bibtex
+
+   @article{dreyer_mechanistic_2025,
+      title = {Mechanistic understanding and validation of large {AI} models with {SemanticLens}},
+      copyright = {2025 The Author(s)},
+      issn = {2522-5839},
+      url = {https://www.nature.com/articles/s42256-025-01084-w},
+      doi = {10.1038/s42256-025-01084-w},
+      language = {en},
+      urldate = {2025-08-18},
+      journal = {Nature Machine Intelligence},
+      author = {Dreyer, Maximilian and Berend, Jim and Labarta, Tobias and Vielhaben, Johanna and Wiegand, Thomas and Lapuschkin, Sebastian and Samek, Wojciech},
+      month = aug,
+      year = {2025},
+      note = {Publisher: Nature Publishing Group},
+      keywords = {Computer science, Information technology},
+      pages = {1--14},
+   }

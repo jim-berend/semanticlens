@@ -23,6 +23,7 @@
   <a href="LICENSE">
     <img alt="DOI" src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg">
   </a>
+	<img alt="PyLint" src="https://github.com/jim-berend/semanticlens/actions/workflows/ruff-lint.yml/badge.svg">
   <a href="https://jim-berend.github.io/semanticlens/">
     <img  src="https://img.shields.io/badge/Docs-SemanticLens-ff8c00">
   </a>

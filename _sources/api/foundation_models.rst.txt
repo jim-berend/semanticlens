@@ -1,0 +1,116 @@
+Foundation Models
+=================
+
+Foundation models provide the semantic embedding space for interpreting neural network components.
+
+.. currentmodule:: semanticlens.foundation_models
+
+Base Classes
+------------
+
+.. automodule:: semanticlens.foundation_models.base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+OpenCLIP Integration
+--------------------
+
+.. automodule:: semanticlens.foundation_models.clip
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Usage Examples
+--------------
+
+Basic CLIP Usage
+~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from semanticlens.foundation_models import OpenClip
+   
+   # Default CLIP model
+   fm = OpenClip()
+   
+   # Specific model variant
+   fm = OpenClip(
+       model_name="ViT-L-14",
+       pretrained="openai"
+   )
+   
+   # Embed images
+   image_embeddings = fm.embed_images(images)
+   
+   # Embed text
+   text_embeddings = fm.embed_text(["a photo of a cat", "a dog"])
+
+Available Models
+~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   # List available models
+   available_models = OpenClip.list_available_models()
+   print(available_models)
+   
+   # Popular model configurations:
+   
+   # Standard CLIP models
+   fm_b32 = OpenClip("ViT-B-32", "openai")
+   fm_b16 = OpenClip("ViT-B-16", "openai") 
+   fm_l14 = OpenClip("ViT-L-14", "openai")
+   
+   # SigLIP models (often better performance)
+   fm_siglip = OpenClip("ViT-B-16-SigLIP", "webli")
+   
+   # LAION trained models  
+   fm_laion = OpenClip("ViT-B-32", "laion2b_s34b_b79k")
+
+Custom Foundation Models
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from semanticlens.foundation_models.base import AbstractVLM
+   import torch
+   
+   class CustomFoundationModel(AbstractVLM):
+       def __init__(self, model_path):
+           self.model = self.load_custom_model(model_path)
+           
+       def embed_images(self, images: torch.Tensor) -> torch.Tensor:
+           # Your custom image embedding logic
+           return self.model.encode_image(images)
+           
+       def embed_text(self, texts: list[str]) -> torch.Tensor:
+           # Your custom text embedding logic
+           return self.model.encode_text(texts)
+           
+       def load_custom_model(self, path):
+           # Load your custom model
+           pass
+   
+   # Use your custom model
+   custom_fm = CustomFoundationModel("path/to/model")
+   lens = sl.Lens(cv, custom_fm)
+
+Batch Processing
+~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   # Process large batches efficiently
+   fm = OpenClip("ViT-B-32", "openai")
+   
+   # Set batch size for large datasets
+   fm.batch_size = 64
+   
+   # Process images in batches
+   all_embeddings = []
+   for batch in dataloader:
+       embeddings = fm.embed_images(batch)
+       all_embeddings.append(embeddings)
+   
+   concatenated = torch.cat(all_embeddings, dim=0)

@@ -1,0 +1,70 @@
+Installation
+============
+
+Requirements
+------------
+
+SemanticLens requires Python 3.9 or later and the following core dependencies:
+
+* PyTorch >= 2.7.1
+* einops >= 0.8.1
+* open-clip-torch >= 3.0.0
+* scikit-learn >= 1.6.1
+* timm >= 1.0.19
+* transformers >= 4.54.1
+* zennit-crp >= 0.6.0
+
+Install from PyPI
+-----------------
+
+The easiest way to install SemanticLens is via pip:
+
+.. code-block:: bash
+
+   pip install semanticlens
+
+Install from Source
+-------------------
+
+To install the latest development version:
+
+.. code-block:: bash
+
+   git clone https://github.com/jim-berend/semanticlens.git
+   cd semanticlens
+   pip install -e .
+
+Development Installation
+------------------------
+
+For development, install with development dependencies:
+
+.. code-block:: bash
+
+   git clone https://github.com/jim-berend/semanticlens.git
+   cd semanticlens
+   pip install -e ".[dev]"
+
+This will install additional packages for testing, documentation, and linting.
+
+Verify Installation
+-------------------
+
+You can verify your installation by running:
+
+.. code-block:: python
+
+   import semanticlens as sl
+   print(sl.__version__)
+
+GPU Support
+-----------
+
+SemanticLens supports GPU acceleration through PyTorch. Make sure you have a 
+CUDA-compatible GPU and the appropriate PyTorch version installed:
+
+.. code-block:: bash
+
+   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+
+For other CUDA versions, see the `PyTorch installation guide <https://pytorch.org/get-started/locally/>`_.

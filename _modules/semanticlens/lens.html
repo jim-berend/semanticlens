@@ -1,0 +1,780 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
+
+    <!-- Generated with Sphinx 7.4.7 and Furo 2025.07.19 -->
+        <title>semanticlens.lens - Project name not set documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Project name not set  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <span class="sidebar-brand-text">Project name not set  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for semanticlens.lens</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Lens: Main class for visual concept analysis and exploration.</span>
+
+<span class="sd">This module provides the primary interface for semantic analysis of neural networks,</span>
+<span class="sd">combining component visualization with foundation models to explore relationships</span>
+<span class="sd">between visual concepts and text embeddings.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">einops</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">PIL</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">safetensors.torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_file</span><span class="p">,</span> <span class="n">save_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm.auto</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">semanticlens.component_visualization.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractComponentVisualizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semanticlens.foundation_models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractVLM</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semanticlens.scores</span><span class="w"> </span><span class="kn">import</span> <span class="n">clarity_score</span><span class="p">,</span> <span class="n">polysemanticity_score</span><span class="p">,</span> <span class="n">redundancy_score</span><span class="p">,</span> <span class="n">similarity_score</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semanticlens.utils.helper</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_fallback_name</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="compute_concept_db">
+<a class="viewcode-back" href="../../semanticlens.html#semanticlens.lens.compute_concept_db">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_concept_db</span><span class="p">(</span><span class="n">cv</span><span class="p">:</span> <span class="n">AbstractComponentVisualizer</span><span class="p">,</span> <span class="n">fm</span><span class="p">:</span> <span class="n">AbstractVLM</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute a concept database in a stateless manner.</span>
+
+<span class="sd">    This function delegates the computation of the concept database to the</span>
+<span class="sd">    provided component visualizer instance. It follows an Inversion of Control</span>
+<span class="sd">    (IoC) pattern where the visualizer, which holds the logic for extracting</span>
+<span class="sd">    concepts, is controlled by this function to perform the embedding using the</span>
+<span class="sd">    provided foundation model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cv : AbstractComponentVisualizer</span>
+<span class="sd">        An initialized component visualizer instance (e.g.,</span>
+<span class="sd">        `ActivationComponentVisualizer`) that has already been run to find</span>
+<span class="sd">        concept examples.</span>
+<span class="sd">    fm : AbstractVLM</span>
+<span class="sd">        An initialized foundation model instance (e.g., `OpenClip`) used for</span>
+<span class="sd">        embedding the concept examples.</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Additional keyword arguments to be passed to the component visualizer&#39;s</span>
+<span class="sd">        internal computation method.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict[str, torch.Tensor]</span>
+<span class="sd">        A dictionary mapping layer names to their corresponding concept</span>
+<span class="sd">        database. Each concept database is a tensor of shape</span>
+<span class="sd">        (n_components, n_samples, embedding_dim).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cv</span><span class="o">.</span><span class="n">_compute_concept_db</span><span class="p">(</span><span class="n">fm</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="text_probing">
+<a class="viewcode-back" href="../../semanticlens.html#semanticlens.lens.text_probing">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">text_probing</span><span class="p">(</span>
+    <span class="n">fm</span><span class="p">:</span> <span class="n">AbstractVLM</span><span class="p">,</span>
+    <span class="n">query</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">aggregated_concept_db</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span>
+    <span class="n">templates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Probe a concept database with text queries to find matching concepts.</span>
+
+<span class="sd">    This function searches for concepts in a model&#39;s learned representations</span>
+<span class="sd">    using natural language. It works by embedding the text query using the</span>
+<span class="sd">    foundation model and then computing the cosine similarity between the query</span>
+<span class="sd">    embedding and the concept embeddings in the database.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fm : AbstractVLM</span>
+<span class="sd">        An initialized foundation model instance for encoding the text query.</span>
+<span class="sd">    query : str or list[str]</span>
+<span class="sd">        The text query or a list of text queries to search for.</span>
+<span class="sd">    aggregated_concept_db : torch.Tensor or dict[str, torch.Tensor]</span>
+<span class="sd">        The aggregated concept database to search within. This should contain</span>
+<span class="sd">        a single embedding for each concept (e.g. mean aggregated),</span>
+<span class="sd">        resulting in a tensor of shape (n_components, embedding_dim).</span>
+<span class="sd">        It can be a single tensor or a dictionary mapping layer names to tensors.</span>
+<span class="sd">    templates : list[str], optional</span>
+<span class="sd">        A list of prompt templates, e.g., &quot;a photo of {}&quot;. Using templates can</span>
+<span class="sd">        improve search fidelity by averaging out the influence of the prompt&#39;s</span>
+<span class="sd">        structure. If provided, the embedding of an empty template is subtracted</span>
+<span class="sd">        from the embedding of the filled template.</span>
+<span class="sd">    batch_size : int, optional</span>
+<span class="sd">        The batch size for embedding text queries if multiple templates are used.</span>
+<span class="sd">        If None, all templated queries are processed in one batch.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    torch.Tensor or dict[str, torch.Tensor]</span>
+<span class="sd">        A tensor or a dictionary of tensors containing the cosine similarity</span>
+<span class="sd">        scores between the query embedding(s) and the concept embeddings. Higher</span>
+<span class="sd">        scores indicate a closer semantic match.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import torch</span>
+<span class="sd">    &gt;&gt;&gt; from semanticlens.foundation_models.clip import OpenClip</span>
+<span class="sd">    &gt;&gt;&gt; from semanticlens.lens import text_probing</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Mock foundation model and concept database</span>
+<span class="sd">    &gt;&gt;&gt; fm = OpenClip(url=&quot;...&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; lens = ConceptLens(fm)</span>
+<span class="sd">    &gt;&gt;&gt; concepts = lens.compute_concept_db(cv)</span>
+<span class="sd">    &gt;&gt;&gt; # Find neurons related to &quot;dogs&quot;</span>
+<span class="sd">    &gt;&gt;&gt; scores = text_probing(fm=fm,query=&quot;dog&quot;, aggregated_concept_db=concepts, templates=[&quot;a photo of a {}&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; top_neuron = scores[&quot;layer4&quot;].argmax()</span>
+<span class="sd">    &gt;&gt;&gt; print(f&quot;Top matching neuron for &#39;dog&#39;: {top_neuron.item()}&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">queries</span> <span class="o">=</span> <span class="n">query</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="n">query</span><span class="p">]</span>
+    <span class="n">query_embeds</span> <span class="o">=</span> <span class="n">_embed_text_probes</span><span class="p">(</span><span class="n">fm</span><span class="p">,</span> <span class="n">queries</span><span class="p">,</span> <span class="n">templates</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">query_embeds</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="n">query_embeds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">queries</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_probe</span><span class="p">(</span><span class="n">query_embeds</span><span class="p">,</span> <span class="n">aggregated_concept_db</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="image_probing">
+<a class="viewcode-back" href="../../semanticlens.html#semanticlens.lens.image_probing">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">image_probing</span><span class="p">(</span>
+    <span class="n">fm</span><span class="p">:</span> <span class="n">AbstractVLM</span><span class="p">,</span>
+    <span class="n">query</span><span class="p">:</span> <span class="n">PIL</span><span class="o">.</span><span class="n">Image</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="p">],</span>
+    <span class="n">aggregated_concept_db</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Probe a concept database with image queries to find matching concepts.</span>
+
+<span class="sd">    This function searches for concepts that are semantically similar to a given</span>
+<span class="sd">    query image or a set of query images. It embeds the image(s) using the</span>
+<span class="sd">    foundation model and computes the cosine similarity against the concept embeddings in the database.</span>
+
+<span class="sd">    If a list of images is provided, their embeddings are averaged to form a</span>
+<span class="sd">    single probe vector. This is useful for finding concepts that represent the</span>
+<span class="sd">    common theme across multiple images.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fm : AbstractVLM</span>
+<span class="sd">        An initialized foundation model instance for encoding the image query.</span>
+<span class="sd">    query : PIL.Image.Image or list[PIL.Image.Image]</span>
+<span class="sd">        A single PIL image or a list of PIL images to use as the query.</span>
+<span class="sd">    aggregated_concept_db : torch.Tensor or dict[str, torch.Tensor]</span>
+<span class="sd">        The aggregated concept database to search within. This should contain</span>
+<span class="sd">        the mean embedding for each concept, resulting in a tensor of shape</span>
+<span class="sd">        (n_components, embedding_dim). It can be a single tensor or a</span>
+<span class="sd">        dictionary mapping layer names to tensors.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    torch.Tensor or dict[str, torch.Tensor]</span>
+<span class="sd">        A tensor or a dictionary of tensors containing the cosine similarity</span>
+<span class="sd">        scores between the image query embedding and the concept embeddings.</span>
+<span class="sd">        Higher scores indicate a closer semantic match.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">query_embed</span> <span class="o">=</span> <span class="n">fm</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="n">fm</span><span class="o">.</span><span class="n">preprocess</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">fm</span><span class="o">.</span><span class="n">device</span><span class="p">))</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+    <span class="n">query_embed</span> <span class="o">=</span> <span class="n">query_embed</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)[</span><span class="kc">None</span><span class="p">]</span> <span class="k">if</span> <span class="n">query_embed</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">query_embed</span>
+
+    <span class="k">return</span> <span class="n">_probe</span><span class="p">(</span><span class="n">query_embed</span><span class="p">,</span> <span class="n">aggregated_concept_db</span><span class="p">)</span></div>
+
+
+
+<span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_embed_text_probes</span><span class="p">(</span>
+    <span class="n">fm</span><span class="p">:</span> <span class="n">AbstractVLM</span><span class="p">,</span>
+    <span class="n">query</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">templates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Templating and embedding logic of text-probes.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">templates</span><span class="p">:</span>
+        <span class="n">query_templated</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">templates</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">query</span><span class="p">]</span>
+        <span class="n">empty_templates</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">templates</span><span class="p">]</span>
+
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">query_templated</span><span class="p">)</span>
+
+        <span class="n">query_templated_embeds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">batch_idx</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">query_templated</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">),</span>
+            <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;text embedding ...&quot;</span><span class="p">,</span>
+            <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">disable</span><span class="o">=</span><span class="n">batch_size</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">query_templated</span><span class="p">),</span>
+        <span class="p">):</span>
+            <span class="n">query_templated_batch</span> <span class="o">=</span> <span class="n">query_templated</span><span class="p">[</span><span class="n">batch_idx</span> <span class="p">:</span> <span class="n">batch_idx</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span>
+            <span class="n">query_templated_embeds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">fm</span><span class="o">.</span><span class="n">encode_text</span><span class="p">(</span><span class="n">fm</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">query_templated_batch</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">fm</span><span class="o">.</span><span class="n">device</span><span class="p">))</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>  <span class="c1"># handle device in tokenization?</span>
+            <span class="p">)</span>
+        <span class="n">query_templated_embeds</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">query_templated_embeds</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">empty_templates_embeds</span> <span class="o">=</span> <span class="n">fm</span><span class="o">.</span><span class="n">encode_text</span><span class="p">(</span>
+            <span class="n">fm</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">empty_templates</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">fm</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>  <span class="c1"># handle device in tokenization?</span>
+
+        <span class="n">query_embed</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">einops</span><span class="o">.</span><span class="n">rearrange</span><span class="p">(</span><span class="n">query_templated_embeds</span><span class="p">,</span> <span class="s2">&quot;(q t) d -&gt; q t d&quot;</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">query</span><span class="p">))</span>
+            <span class="o">-</span> <span class="n">einops</span><span class="o">.</span><span class="n">rearrange</span><span class="p">(</span><span class="n">empty_templates_embeds</span><span class="p">,</span> <span class="s2">&quot;t d -&gt; 1 t d&quot;</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">query_embed</span> <span class="o">=</span> <span class="n">fm</span><span class="o">.</span><span class="n">encode_text</span><span class="p">(</span><span class="n">fm</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">fm</span><span class="o">.</span><span class="n">device</span><span class="p">))</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">query_embed</span>
+
+
+<span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_probe</span><span class="p">(</span>
+    <span class="n">query</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">aggregated_concept_db</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aggregated_concept_db</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+        <span class="n">tensors</span> <span class="o">=</span> <span class="n">similarity_score</span><span class="p">(</span><span class="n">query</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">aggregated_concept_db</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">aggregated_concept_db</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tensors</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">similarity_score</span><span class="p">(</span><span class="n">query</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">aggregated_concept_db</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">return</span> <span class="n">tensors</span>
+
+
+<div class="viewcode-block" id="Lens">
+<a class="viewcode-back" href="../../semanticlens.html#semanticlens.lens.Lens">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Lens</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Orchestration layer for feature extraction and concept probing.</span>
+
+<span class="sd">    The `Lens` class is the main entry point for using the `semanticlens`</span>
+<span class="sd">    library. It provides a high-level, stateful interface that manages a</span>
+<span class="sd">    foundation model and orchestrates the entire semantic analysis workflow,</span>
+<span class="sd">    from computing a concept database to searching it and evaluating its</span>
+<span class="sd">    interpretability.</span>
+
+<span class="sd">    This class simplifies the process by holding the state of the foundation</span>
+<span class="sd">    model and providing convenient methods that wrap the core functionalities of</span>
+<span class="sd">    the package.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fm : AbstractVLM</span>
+<span class="sd">        An initialized vision-language foundation model that will be used for</span>
+<span class="sd">        all embedding and probing tasks.</span>
+<span class="sd">    device : str or torch.device, optional</span>
+<span class="sd">        The device to run the foundation model on (e.g., &quot;cuda&quot;, &quot;cpu&quot;). If None,</span>
+<span class="sd">        the model&#39;s current device is used.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fm : AbstractVLM</span>
+<span class="sd">        The foundation model instance used by the Lens.</span>
+<span class="sd">    device : torch.device</span>
+<span class="sd">        The device on which the foundation model is located.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import torch</span>
+<span class="sd">    &gt;&gt;&gt; from semanticlens import Lens</span>
+<span class="sd">    &gt;&gt;&gt; from semanticlens.foundation_models import ClipMobile</span>
+<span class="sd">    &gt;&gt;&gt; from semanticlens.component_visualization import ActivationComponentVisualizer</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # 1. Initialize the Lens with a foundation model</span>
+<span class="sd">    &gt;&gt;&gt; fm = ClipMobile(device=&quot;cpu&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; lens = Lens(fm=fm)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # 2. Assume `cv` is an initialized ActivationComponentVisualizer</span>
+<span class="sd">    &gt;&gt;&gt; cv = ActivationComponentVisualizer(...)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # 3. Compute the concept database</span>
+<span class="sd">    &gt;&gt;&gt; concept_db = lens.compute_concept_db(cv)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # 4. Probe the database with a text query</span>
+<span class="sd">    &gt;&gt;&gt; aggregated_db = {&quot;layer4&quot;: concept_db[&quot;layer4&quot;].mean(dim=1)}</span>
+<span class="sd">    &gt;&gt;&gt; scores = lens.text_probing(&quot;a photo of a cat&quot;, aggregated_db)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fm</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">AbstractVLM</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fm</span><span class="p">:</span> <span class="n">AbstractVLM</span> <span class="o">=</span> <span class="n">fm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">fm</span><span class="o">.</span><span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fm</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fm</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fm</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">get_fallback_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fm</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Assigned fallback name to foundation model: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fm</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Lens.compute_concept_db">
+<a class="viewcode-back" href="../../semanticlens.html#semanticlens.lens.Lens.compute_concept_db">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_concept_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cv</span><span class="p">:</span> <span class="n">AbstractComponentVisualizer</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute or load from cache the concept database for a visualizer.</span>
+
+<span class="sd">        This method orchestrates the creation of the concept database, which is a</span>
+<span class="sd">        semantic representation of the concepts learned by a model&#39;s components.</span>
+<span class="sd">        It follows an Inversion of Control (IoC) pattern by calling the internal</span>
+<span class="sd">        `_compute_concept_db` method of the provided component visualizer `cv`.</span>
+
+<span class="sd">        If caching is enabled in the component visualizer, this method will first</span>
+<span class="sd">        attempt to load the concept database from a pre-computed cache file. If</span>
+<span class="sd">        the file does not exist, it will compute the database and save it to the</span>
+<span class="sd">        cache for future use.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cv : AbstractComponentVisualizer</span>
+<span class="sd">            An initialized component visualizer that has already collected the</span>
+<span class="sd">            maximally activating samples for the target model&#39;s components</span>
+<span class="sd">            (i.e., `cv.run()` has been called).</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Additional keyword arguments to be passed to the visualizer&#39;s</span>
+<span class="sd">            `_compute_concept_db` method, such as `batch_size` or `num_workers`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict[str, torch.Tensor]</span>
+<span class="sd">            A dictionary mapping layer names to their concept databases. Each</span>
+<span class="sd">            database is a tensor of shape (n_components, n_samples,</span>
+<span class="sd">            embedding_dim).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">cv</span><span class="o">.</span><span class="n">caching</span><span class="p">:</span>
+            <span class="n">fdir</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">storage_dir</span> <span class="o">/</span> <span class="s2">&quot;concept_database&quot;</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">fm</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">fdir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;concept_db-&quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">cv</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">]])</span>
+                <span class="o">+</span> <span class="s2">&quot;.safetensors&quot;</span>
+            <span class="p">)</span>
+            <span class="n">fpath</span> <span class="o">=</span> <span class="n">fdir</span> <span class="o">/</span> <span class="n">fname</span>
+            <span class="k">if</span> <span class="n">fpath</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Loading concept DB from cache&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">load_file</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">fpath</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Computing concept DB and saving to cache&quot;</span><span class="p">)</span>
+            <span class="n">concept_db</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">_compute_concept_db</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fm</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">save_file</span><span class="p">(</span><span class="n">tensors</span><span class="o">=</span><span class="n">concept_db</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">fpath</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved concept DB to cache </span><span class="si">{</span><span class="n">fpath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">concept_db</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Caching is not enabled. Computing Concept DB&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">cv</span><span class="o">.</span><span class="n">_compute_concept_db</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fm</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Lens.text_probing">
+<a class="viewcode-back" href="../../semanticlens.html#semanticlens.lens.Lens.text_probing">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">text_probing</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">aggregated_concept_db</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span>
+        <span class="n">templates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Probe a concept database with text queries to find matching concepts.</span>
+
+<span class="sd">        This method is a convenient wrapper around the stateless</span>
+<span class="sd">        :func:`~text_probing` function. It uses the foundation model stored</span>
+<span class="sd">        within the `Lens` instance to perform the search.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query : str or list[str]</span>
+<span class="sd">            The text query or a list of text queries to search for.</span>
+<span class="sd">        aggregated_concept_db : torch.Tensor or dict[str, torch.Tensor]</span>
+<span class="sd">            The aggregated concept database to search within, with tensors of</span>
+<span class="sd">            shape (n_components, embedding_dim).</span>
+<span class="sd">        templates : list[str], optional</span>
+<span class="sd">            A list of prompt templates, e.g., &quot;a photo of {}&quot;.</span>
+<span class="sd">        batch_size : int, optional</span>
+<span class="sd">            The batch size for embedding text queries.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        torch.Tensor or dict[str, torch.Tensor]</span>
+<span class="sd">            A tensor or a dictionary of tensors containing the cosine similarity</span>
+<span class="sd">            scores between the query and the concepts.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">text_probing</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fm</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">aggregated_concept_db</span><span class="p">,</span> <span class="n">templates</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Lens.image_probing">
+<a class="viewcode-back" href="../../semanticlens.html#semanticlens.lens.Lens.image_probing">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">image_probing</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="n">PIL</span><span class="o">.</span><span class="n">Image</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="p">],</span>
+        <span class="n">aggregated_concept_db</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Probe a concept database with image queries to find matching concepts.</span>
+
+<span class="sd">        This method is a convenient wrapper around the stateless</span>
+<span class="sd">        :func:`~image_probing` function. It uses the foundation model stored</span>
+<span class="sd">        within the `Lens` instance to perform the search.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query : PIL.Image.Image or list[PIL.Image.Image]</span>
+<span class="sd">            A single PIL image or a list of PIL images to use as the query.</span>
+<span class="sd">        aggregated_concept_db : torch.Tensor or dict[str, torch.Tensor]</span>
+<span class="sd">            The aggregated concept database to search within, with tensors of</span>
+<span class="sd">            shape (n_components, embedding_dim).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        torch.Tensor or dict[str, torch.Tensor]</span>
+<span class="sd">            A tensor or a dictionary of tensors containing the cosine similarity</span>
+<span class="sd">            scores between the query and the concepts.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">image_probing</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fm</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">aggregated_concept_db</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Lens.eval_clarity">
+<a class="viewcode-back" href="../../semanticlens.html#semanticlens.lens.Lens.eval_clarity">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval_clarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concept_db</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the clarity score for concepts in the database.</span>
+
+<span class="sd">        Clarity measures how semantically coherent the examples for each concept</span>
+<span class="sd">        are. A high clarity score suggests that a neuron has learned a</span>
+<span class="sd">        well-defined, easily understandable concept.</span>
+
+<span class="sd">        This method wraps the :func:`~semanticlens.scores.clarity_score` function.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        concept_db : torch.Tensor or dict[str, torch.Tensor]</span>
+<span class="sd">            A concept database tensor of shape (n_components, n_samples,</span>
+<span class="sd">            embedding_dim), or a dictionary mapping layer names to such tensors.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        torch.Tensor or dict[str, torch.Tensor]</span>
+<span class="sd">            A tensor of clarity scores for each component, or a dictionary of</span>
+<span class="sd">            such tensors.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        semanticlens.scores.clarity_score : The underlying function for the score.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">concept_db</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">clarity_score</span><span class="p">(</span><span class="n">concept_db</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">clarity_score</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">concept_db</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+
+<div class="viewcode-block" id="Lens.eval_redundancy">
+<a class="viewcode-back" href="../../semanticlens.html#semanticlens.lens.Lens.eval_redundancy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval_redundancy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggregated_concept_db</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the redundancy score for concepts in the database.</span>
+
+<span class="sd">        Redundancy measures the degree of semantic overlap between different</span>
+<span class="sd">        components (e.g. neurons) in a layer. It is calculated as the average maximal</span>
+<span class="sd">        similarity of each component to any other component in the set.</span>
+
+<span class="sd">        This method wraps the :func:`~semanticlens.scores.redundancy_score` function.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        aggregated_concept_db : torch.Tensor or dict[str, torch.Tensor]</span>
+<span class="sd">            An aggregated concept database tensor of shape (n_components,</span>
+<span class="sd">            embedding_dim), or a dictionary mapping layer names to such tensors.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        torch.Tensor or dict[str, torch.Tensor]</span>
+<span class="sd">            A tensor representing the mean redundancy score, or a dictionary of</span>
+<span class="sd">            such scores for each layer.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        semanticlens.scores.redundancy_score : The underlying function for the score.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aggregated_concept_db</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">redundancy_score</span><span class="p">(</span><span class="n">aggregated_concept_db</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">redundancy_score</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">aggregated_concept_db</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+
+<div class="viewcode-block" id="Lens.eval_polysemanticity">
+<a class="viewcode-back" href="../../semanticlens.html#semanticlens.lens.Lens.eval_polysemanticity">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval_polysemanticity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concept_db</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the polysemanticity score for concepts in the database.</span>
+
+<span class="sd">        Polysemanticity measures whether a single neuron encodes multiple,</span>
+<span class="sd">        semantically distinct concepts. The score is calculated by clustering</span>
+<span class="sd">        the examples for each concept and measuring the diversity of the</span>
+<span class="sd">        resulting cluster centers.</span>
+
+<span class="sd">        This method wraps the :func:`~semanticlens.scores.polysemanticity_score` function.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        concept_db : torch.Tensor or dict[str, torch.Tensor]</span>
+<span class="sd">            A concept database tensor of shape (n_components, n_samples,</span>
+<span class="sd">            embedding_dim), or a dictionary mapping layer names to such tensors.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        torch.Tensor or dict[str, torch.Tensor]</span>
+<span class="sd">            A tensor of polysemanticity scores for each component, or a dictionary</span>
+<span class="sd">            of such tensors.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        semanticlens.scores.polysemanticity_score : The underlying function for the score.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">concept_db</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">polysemanticity_score</span><span class="p">(</span><span class="n">concept_db</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">polysemanticity_score</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">concept_db</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+</div>
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

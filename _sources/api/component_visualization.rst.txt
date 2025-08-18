@@ -1,0 +1,93 @@
+Component Visualization
+======================
+
+Component visualizers extract concept examples from neural network layers to understand what different components have learned.
+
+.. currentmodule:: semanticlens.component_visualization
+
+Base Classes
+------------
+
+.. automodule:: semanticlens.component_visualization.base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Activation-Based Visualization
+------------------------------
+
+.. automodule:: semanticlens.component_visualization.activation_based
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Relevance-Based Visualization  
+-----------------------------
+
+.. warning::
+   **RelevanceComponentVisualizer is currently under heavy development** and may not be 
+   stable. The API and functionality may change significantly. For production use cases, 
+   we recommend using ActivationComponentVisualizer.
+
+.. automodule:: semanticlens.component_visualization.relevance_based
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Activation Caching
+------------------
+
+.. automodule:: semanticlens.component_visualization.activation_caching
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Aggregators
+-----------
+
+.. automodule:: semanticlens.component_visualization.aggregators
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Usage Examples
+--------------
+
+Activation-Based Analysis
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from semanticlens.component_visualization import ActivationComponentVisualizer
+   
+   # Basic setup
+   cv = ActivationComponentVisualizer(
+       model=model,
+       dataset=dataloader,
+       target_layer="layer4.2.conv3",
+       n_samples_per_component=10
+   )
+   
+   # Run the analysis
+   cv.run()
+   
+   # Access results
+   concept_examples = cv.concept_examples
+   activations = cv.activations
+
+Custom Aggregation
+~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from semanticlens.component_visualization.aggregators import TopKAggregator
+   
+   # Use custom aggregation strategy
+   aggregator = TopKAggregator(k=20)
+   
+   cv = ActivationComponentVisualizer(
+       model=model,
+       dataset=dataloader,
+       target_layer="layer4.2.conv3",
+       aggregation_fn=aggregator
+   )

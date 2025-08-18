@@ -1,0 +1,76 @@
+Utilities
+=========
+
+Helper functions and utilities for SemanticLens.
+
+.. currentmodule:: semanticlens.utils
+
+Helper Functions
+----------------
+
+.. automodule:: semanticlens.utils.helper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Logging Setup
+-------------
+
+.. automodule:: semanticlens.utils.log_setup
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Rendering Utilities
+-------------------
+
+.. automodule:: semanticlens.utils.render
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Usage Examples
+--------------
+
+Setting Up Logging
+~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from semanticlens.utils.log_setup import setup_logging
+   import logging
+   
+   # Setup logging with default configuration
+   setup_logging()
+   
+   # Or with custom level
+   setup_logging(level=logging.DEBUG)
+   
+   # Use logger in your code
+   logger = logging.getLogger(__name__)
+   logger.info("Starting analysis...")
+
+Helper Functions
+~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from semanticlens.utils.helper import get_fallback_name
+   
+   # Get a fallback name for components
+   name = get_fallback_name(layer_name="layer4.2.conv3", component_idx=42)
+   print(name)  # "layer4.2.conv3_42"
+
+Rendering Visualizations
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from semanticlens.utils.render import render_concept_examples
+   
+   # Render concept examples for visualization
+   rendered_examples = render_concept_examples(
+       concept_examples=cv.concept_examples,
+       n_examples_per_concept=5,
+       figsize=(12, 8)
+   )

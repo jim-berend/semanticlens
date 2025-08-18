@@ -1,0 +1,183 @@
+Component Visualization Strategies
+===================================
+
+Component visualization is the first step in the SemanticLens pipeline. It inPerformance Considerations
+--------------------------
+
+- **Batch size**: Larger batches are faster but use more memory
+- **Number of examples**: More examples give better concepts but take longer
+- **Caching**: Enable activation caching for faster repeated runs
+
+.. code-block:: python
+
+   # Enable caching for faster repeated runs
+   cv = ActivationComponentVisualizer(
+       model=model,
+       dataset=dataloader,
+       target_layer="layer4.2.conv3",
+       cache_activations=True,
+       cache_dir="./activation_cache"
+   )
+representative examples from your dataset that maximally activate specific components (neurons, 
+filters, or channels) in your neural network.
+
+Overview
+--------
+
+SemanticLens provides several strategies for component visualization, each with different 
+strengths and use cases:
+
+1. **Activation-based**: Find examples that cause the highest activations
+2. **Custom aggregation**: Define your own strategy for selecting examples
+
+.. note::
+   **RelevanceComponentVisualizer** (attribution-based methods) is currently under heavy 
+   development and may not be stable. We recommend using ActivationComponentVisualizer 
+   for production use cases.
+
+Activation-Based Visualization
+------------------------------
+
+This is the most straightforward approach - for each component, find the input examples 
+that cause the highest activation values.
+
+.. code-block:: python
+
+   from semanticlens.component_visualization import ActivationComponentVisualizer
+   
+   cv = ActivationComponentVisualizer(
+       model=model,
+       dataset=dataloader,
+       target_layer="layer4.2.conv3",
+       n_samples_per_component=10,
+       batch_size=32
+   )
+   
+   cv.run()
+
+**Advantages:**
+- Simple and fast
+- Good for finding examples that strongly activate components
+- Works well for conv layers and fully connected layers
+
+**Disadvantages:**
+- May not capture the most semantically relevant parts of images
+- Can be dominated by spurious correlations
+
+Custom Aggregation Strategies
+------------------------------
+
+You can define custom strategies for how examples are selected and aggregated:
+
+.. code-block:: python
+
+   from semanticlens.component_visualization.aggregators import (
+       TopKAggregator, 
+       ThresholdAggregator,
+       RandomSampleAggregator
+   )
+   
+   # Take top 20 examples instead of default 10
+   top_k_agg = TopKAggregator(k=20)
+   
+   # Take all examples above 95th percentile
+   threshold_agg = ThresholdAggregator(quantile=0.95)
+   
+   # Random sampling from top examples
+   random_agg = RandomSampleAggregator(n_samples=15, top_percentile=0.1)
+   
+   cv = ActivationComponentVisualizer(
+       model=model,
+       dataset=dataloader,
+       target_layer="layer4.2.conv3",
+       aggregation_fn=top_k_agg
+   )
+
+Creating Custom Aggregators
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from semanticlens.component_visualization.base import AbstractAggregator
+   
+   class MedianAggregator(AbstractAggregator):
+       def __init__(self, n_samples: int = 10):
+           self.n_samples = n_samples
+           
+       def aggregate(self, activations, images, indices):
+           # Find examples closest to median activation
+           median_val = torch.median(activations)
+           distances = torch.abs(activations - median_val)
+           top_indices = torch.topk(distances, self.n_samples, largest=False).indices
+           
+           return {
+               'images': images[top_indices],
+               'activations': activations[top_indices],
+               'dataset_indices': indices[top_indices]
+           }
+
+Layer Selection Guidelines
+--------------------------
+
+Choosing the right layer is crucial for meaningful analysis:
+
+**Early Layers (e.g., layer1, layer2)**
+- Detect low-level features (edges, textures, colors)
+- Good for understanding basic visual processing
+- Components tend to be more interpretable
+
+**Middle Layers (e.g., layer3)**  
+- Detect mid-level features (object parts, shapes)
+- Balance between interpretability and semantic richness
+- Often most informative for many applications
+
+**Late Layers (e.g., layer4, fc layers)**
+- Detect high-level semantic concepts  
+- More abstract and complex representations
+- May be more polysemantic (represent multiple concepts)
+
+**Examples for ResNet-50:**
+
+.. code-block:: python
+
+   # Low-level features
+   cv_early = ActivationComponentVisualizer(model, dataset, "layer1.2.conv3")
+   
+   # Mid-level features  
+   cv_mid = ActivationComponentVisualizer(model, dataset, "layer2.3.conv3")
+   
+   # High-level features
+   cv_late = ActivationComponentVisualizer(model, dataset, "layer4.2.conv3")
+
+Best Practices
+--------------
+
+1. **Start with activation-based visualization** for reliable results
+2. **Experiment with different layers** to find the right level of abstraction
+3. **Use sufficient examples** (10-20 per component) for robust analysis
+4. **Consider your dataset size** - larger datasets generally give better results
+5. **Validate results** by manually inspecting some concept examples
+6. **Use custom aggregation strategies** when you need specific selection criteria
+
+.. note::
+   Avoid using RelevanceComponentVisualizer in production environments as it is 
+   currently under heavy development.
+
+Performance Considerations
+--------------------------
+
+- **Batch size**: Larger batches are faster but use more memory
+- **Number of examples**: More examples give better concepts but take longer
+- **Attribution methods**: LRP is generally fastest, Integrated Gradients slowest
+- **Caching**: Enable activation caching for repeated experiments
+
+.. code-block:: python
+
+   # Enable caching for faster repeated runs
+   cv = ActivationComponentVisualizer(
+       model=model,
+       dataset=dataloader,
+       target_layer="layer4.2.conv3",
+       cache_activations=True,
+       cache_dir="./activation_cache"
+   )

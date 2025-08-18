@@ -1,0 +1,43 @@
+Changelog
+=========
+
+All notable changes to SemanticLens will be documented in this file.
+
+The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
+and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
+
+[Unreleased]
+------------
+
+Added
+~~~~~
+- Enhanced documentation with comprehensive API reference
+- Interactive Jupyter notebook tutorials
+- Custom CSS styling for better documentation appearance
+
+Changed
+~~~~~~~
+- Improved Sphinx configuration with better theme options
+- Enhanced code examples throughout documentation
+
+[0.1.1] - 2025-01-XX
+---------------------
+
+Added
+~~~~~
+- Initial release of SemanticLens
+- Core Lens class for semantic analysis
+- Component visualization strategies (activation-based, relevance-based)
+- Foundation model integration (OpenCLIP)
+- Interpretability metrics (clarity, polysemanticity, redundancy, similarity)
+- Text probing functionality
+- Comprehensive test suite
+- Documentation and tutorials
+
+Features
+~~~~~~~~
+- Support for multiple component visualization strategies
+- Integration with popular foundation models
+- Quantitative interpretability metrics
+- Natural language probing of model internals
+- Extensible architecture for custom visualizers and foundation models

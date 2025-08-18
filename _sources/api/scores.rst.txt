@@ -1,0 +1,116 @@
+Scores and Metrics
+==================
+
+Quantitative metrics for evaluating the interpretability of learned representations.
+
+.. currentmodule:: semanticlens.scores
+
+Interpretability Metrics
+-------------------------
+
+.. autofunction:: clarity_score
+
+.. autofunction:: polysemanticity_score
+
+.. autofunction:: redundancy_score
+
+.. autofunction:: similarity_score
+
+Usage Examples
+--------------
+
+Computing All Metrics
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   import semanticlens as sl
+   
+   # After setting up component visualizer and foundation model
+   concept_db = sl.compute_concept_db(cv, fm)
+   
+   # Compute interpretability metrics
+   clarity = sl.clarity_score(concept_db)
+   polysemanticity = sl.polysemanticity_score(concept_db) 
+   redundancy = sl.redundancy_score(concept_db)
+   
+   print(f"Clarity: {clarity:.3f}")
+   print(f"Polysemanticity: {polysemanticity:.3f}")
+   print(f"Redundancy: {redundancy:.3f}")
+
+Layer-wise Analysis
+~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   # Analyze multiple layers
+   layers = ["layer2.3.conv3", "layer3.5.conv3", "layer4.2.conv3"]
+   
+   metrics = {}
+   for layer in layers:
+       cv = sl.ActivationComponentVisualizer(model, dataset, layer)
+       cv.run()
+       
+       concept_db = sl.compute_concept_db(cv, fm)
+       
+       metrics[layer] = {
+           'clarity': sl.clarity_score(concept_db),
+           'polysemanticity': sl.polysemanticity_score(concept_db),
+           'redundancy': sl.redundancy_score(concept_db)
+       }
+   
+   # Compare layers
+   for layer, scores in metrics.items():
+       print(f"{layer}: Clarity={scores['clarity']:.3f}, "
+             f"Polysemanticity={scores['polysemanticity']:.3f}, "
+             f"Redundancy={scores['redundancy']:.3f}")
+
+Similarity Analysis
+~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   # Compare concept similarity between different models or layers
+   concept_db1 = sl.compute_concept_db(cv1, fm)
+   concept_db2 = sl.compute_concept_db(cv2, fm)
+   
+   # Compute pairwise similarity
+   similarity_matrix = sl.similarity_score(concept_db1, concept_db2)
+   
+   # Average similarity
+   avg_similarity = similarity_matrix.mean()
+   print(f"Average similarity: {avg_similarity:.3f}")
+
+Metric Interpretation
+---------------------
+
+**Clarity Score**
+    Measures how well-defined and coherent each concept is. Higher values indicate 
+    that concepts have clear, consistent semantic meaning.
+    
+    - Range: [0, 1]
+    - Higher is better
+    - Computed as the average cosine similarity within concept clusters
+
+**Polysemanticity Score**
+    Measures how many different concepts each component represents. Lower values 
+    indicate more specialized (monosemantic) components.
+    
+    - Range: [0, ∞]
+    - Lower is better (more specialized)
+    - Based on the entropy of concept distributions
+
+**Redundancy Score**
+    Measures how much overlap exists between different components. Lower values 
+    indicate more diverse, non-redundant representations.
+    
+    - Range: [0, 1] 
+    - Lower is better (less redundant)
+    - Computed as average pairwise similarity between components
+
+**Similarity Score**
+    Measures the cosine similarity between concept embeddings, useful for 
+    comparing different models or analyzing concept relationships.
+    
+    - Range: [-1, 1]
+    - Higher values indicate more similar concepts

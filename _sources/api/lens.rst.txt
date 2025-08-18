@@ -1,0 +1,73 @@
+Lens Module
+===========
+
+The main :class:`Lens` class provides the primary interface for semantic analysis of neural networks.
+
+.. currentmodule:: semanticlens.lens
+
+Core Functions
+--------------
+
+.. autofunction:: compute_concept_db
+
+.. autofunction:: text_probing
+
+Lens Class
+----------
+
+.. autoclass:: Lens
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :special-members: __init__
+
+Usage Examples
+--------------
+
+Basic Usage
+~~~~~~~~~~~
+
+.. code-block:: python
+
+   import semanticlens as sl
+   
+   # Set up component visualizer and foundation model
+   cv = sl.ActivationComponentVisualizer(model, dataset)
+   fm = sl.OpenClip()
+   
+   # Create lens
+   lens = sl.Lens(cv, fm)
+   
+   # Probe with text
+   results = lens.text_probe("a photo of a cat")
+
+Advanced Text Probing
+~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   # Use templates for better results
+   templates = [
+       "a photo of {}",
+       "an image of {}",
+       "{} in the picture"
+   ]
+   
+   results = sl.text_probing(
+       fm=foundation_model,
+       query="dog",
+       aggregated_concept_db=concept_db,
+       templates=templates,
+       batch_size=16
+   )
+
+Stateless Concept Database Computation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   # Compute concept database without creating a Lens object
+   concept_db = sl.compute_concept_db(
+       cv=component_visualizer,
+       fm=foundation_model
+   )

@@ -42,8 +42,8 @@ To run these tutorials interactively:
 
    .. code-block:: bash
 
-      pip install -e ".[dev]"
-      pip install jupyter
+      uv sync
+      uv pip install jupyter
 
 3. Start Jupyter:
 

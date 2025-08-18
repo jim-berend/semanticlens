@@ -13,11 +13,11 @@
   <a href="https://www.nature.com/articles/s42256-025-01084-w">
     <img  src="https://img.shields.io/static/v1?label=Nature&message=Machine%20Intelligence&color=green">
   </a>
-  <!-- <a href="https://arxiv.org/abs/2501.05398">
-    <img alt="arXiv" src="https://img.shields.io/badge/arXiv-2501.05398-b31b1b.svg">
-  </a> -->
   <a href="https://doi.org/10.5281/zenodo.15233581">
     <img alt="DOI" src="https://zenodo.org/badge/DOI/10.5281/zenodo.15233581.svg">
+  </a>
+  <a href="https://pypi.org/project/semanticlens/">
+    <img alt="pypi" src="https://img.shields.io/pypi/v/semanticlens">
   </a>
   <img  src="https://img.shields.io/badge/Python-3.9, 3.10, 3.11-efefef">
   <a href="LICENSE">

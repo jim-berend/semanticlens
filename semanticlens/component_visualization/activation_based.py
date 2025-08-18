@@ -1,14 +1,18 @@
-"""
-Activation-based component visualization for neural network analysis.
+"""Activation-based component visualization for neural network analysis.
 
-This module provides tools for visualizing neural network components using
-activation maximization techniques, finding the input examples that most
-strongly activate specific neurons or channels.
+This module provides the `ActivationComponentVisualizer`, a tool for identifying
+the concept examples that most strongly activate specific components (e.g., neurons,
+channels) of a neural network. It works by performing a forward pass over a dataset,
+caching the activations for specified layers, and identifying the top-k activating
+input samples for each component.
+For component visualization the full act-max samples are returned.
+
 """
 
 from __future__ import annotations
 
 import logging
+import warnings
 from pathlib import Path
 
 import torch
@@ -18,17 +22,98 @@ from tqdm import tqdm
 from semanticlens.component_visualization import aggregators
 from semanticlens.component_visualization.activation_caching import ActMaxCache
 from semanticlens.component_visualization.base import AbstractComponentVisualizer
+from semanticlens.utils.helper import get_fallback_name
 
 logger = logging.getLogger(__name__)
 
 
-class ActivationComponentVisualizer(AbstractComponentVisualizer):
+class MissingNameWarning(UserWarning):
     """
-    Component visualizer using activation maximization.
+    Warning raised when a model or dataset is missing a `.name` attribute.
 
-    This class finds and visualizes the input examples that most strongly
-    activate specific neural network components using activation caching
-    and maximization techniques.
+    This attribute is crucial for the caching mechanism to create a stable and predictable cache location.
+    Without it, a fallback name is generated.
+    """
+
+    pass
+
+
+class ActivationComponentVisualizer(AbstractComponentVisualizer):
+    """Finds and visualizes concepts based on activation maximization.
+
+    This class implements the activation-based approach to component
+    visualization. It processes a dataset to find the input examples that
+    produce the highest activation values for each component within specified
+    layers of a neural network.
+
+    The results, including the indices of the top-activating samples, are
+    cached to disk for efficient re-use in subsequent analyses.
+
+    Parameters
+    ----------
+    model : torch.nn.Module
+        The neural network model to analyze. It is recommended that the model
+        has a `.name` attribute for reliable caching.
+    dataset_model : torch.utils.data.Dataset
+        The dataset used for model inference to find top-activating samples.
+        It should be preprocessed as required by the model. It is recommended
+        that the dataset has a `.name` attribute for reliable caching.
+    dataset_fm : torch.utils.data.Dataset
+        The dataset preprocessed for the foundation model. This version should
+        yield raw data (e.g., PIL Images) that the foundation model's own
+        preprocessor can handle.
+    layer_names : list[str]
+        A list of names of the layers to analyze (e.g., `['layer4.1.conv2']`).
+    num_samples : int
+        The number of top-activating samples to collect for each component.
+    device : torch.device or str, optional
+        The device on which to perform computations. If None, the model's
+        current device is used.
+    aggregate_fn : callable, optional
+        A function to aggregate the spatial or temporal dimensions of the layer
+        activations into a single value per component. If None, defaults to
+        taking the mean over spatial dimensions for convolutional layers.
+        (A selection of aggregation functions are provided in
+        `semanticlens.component_visualization.aggregators`.)
+    cache_dir : str or None, optional
+        The root directory for caching results. If None, caching is disabled.
+
+    Attributes
+    ----------
+    actmax_cache : ActMaxCache
+        An object that manages the collection and caching of top activations.
+
+    Raises
+    ------
+    ValueError
+        If any layer name in `layer_names` is not found in the model.
+
+    Examples
+    --------
+    >>> import torch
+    >>> from torchvision.models import resnet18
+    >>> from torch.utils.data import TensorDataset
+    >>> from semanticlens.component_visualization import ActivationComponentVisualizer
+    >>>
+    >>> # 1. Prepare model and dataset
+    >>> model = resnet18(weights=...)
+    >>> model.name = "resnet18"
+    >>> dummy_data = TensorDataset(torch.randn(100, 3, 224, 224))
+    >>> dummy_data.name = "dummy_data"
+    >>>
+    >>> # 2. Initialize the visualizer
+    >>> visualizer = ActivationComponentVisualizer(
+    ...     model=model,
+    ...     dataset_model=dummy_data,
+    ...     dataset_fm=dummy_data, # Using same dataset for simplicity here
+    ...     layer_names=["layer4.1.conv2"],
+    ...     num_samples=10,
+    ...     cache_dir="./cache"
+    ... )
+    >>>
+    >>> # 3. Run the analysis to find top-activating samples
+    >>> # This will process the dataset and save the results to the cache.
+    >>> # visualizer.run(batch_size=32)
     """
 
     AGGREGATION_DEFAULTS = {
@@ -77,24 +162,57 @@ class ActivationComponentVisualizer(AbstractComponentVisualizer):
         self.model = model
         self.dataset = dataset_model
         self.dataset_fm = dataset_fm
+        self._init_cache_dir(cache_dir)
+        self._validate_args()
+
         self.layer_names = layer_names
         self._check_layers()
-        self._init_cache_dir(cache_dir)
+
         device = device or next(model.parameters()).device
+        self.model.to(device)
 
         if aggregate_fn is None:
             logger.warning(f"No aggregation_fn provided using default: {aggregators.aggregate_conv_mean.__name__}")
             aggregate_fn = aggregators.aggregate_conv_mean
-
-        self.model.to(device)
 
         self.actmax_cache = ActMaxCache(self.layer_names, n_collect=num_samples, aggregation_fn=aggregate_fn)
 
         if self.caching:
             try:
                 self.actmax_cache.load(self.storage_dir)
+                logger.info(f"Results loaded from {self.storage_dir}")
             except FileNotFoundError:
-                pass
+                logger.info(f"Results will be stored in {self.storage_dir}")
+
+    def _validate_args(self):
+        """For caching we need names for model and dataset.
+        They are supposed to be provided as instance-attributes.
+        If they are missing we use a fallback that is a combination of their class-name and a hash of their printable representation (`repr()`).
+        """
+        if not hasattr(self.model, "name"):
+            model_name = get_fallback_name(self.model)
+            if self.caching:
+                message = (
+                    f"Model does not have a name attribute, which is required for reliable caching.\n"
+                    f"Using a fallback name: {model_name}."
+                )
+                warnings.warn(message, MissingNameWarning, stacklevel=2)
+            self.model.name = model_name
+        if not hasattr(self.dataset, "name"):
+            dataset_name = get_fallback_name(self.dataset)
+            if self.caching:
+                message = (
+                    f"Dataset does not have a name attribute, which is required for reliable caching.\n"
+                    f"Using a fallback name: {dataset_name}."
+                )
+                warnings.warn(message, MissingNameWarning, stacklevel=2)
+            self.dataset.name = dataset_name
+
+        if len(self.dataset) != len(self.dataset_fm):
+            raise ValueError(
+                "Model and foundation model datasets should have the same length.",
+                (len(self.dataset), len(self.dataset_fm)),
+            )
 
     def _check_layers(self):
         """
@@ -124,7 +242,6 @@ class ActivationComponentVisualizer(AbstractComponentVisualizer):
         else:
             self._cache_root = Path(cache_dir)
             self._cache_root.mkdir(parents=True, exist_ok=True)
-            logger.info(f"Results will be stored in {self.storage_dir}")
 
     @property
     def device(self):
@@ -190,25 +307,26 @@ class ActivationComponentVisualizer(AbstractComponentVisualizer):
         return {**self.actmax_cache.metadata, "dataset": self.dataset.name, "model": self.model.name}
 
     def run(self, batch_size=32, num_workers=0):
-        """
-        Run activation maximization analysis on the dataset.
+        """Run the activation maximization analysis on the dataset.
 
-        Processes the entire dataset to find maximally activating examples
-        for each component in the specified layers. Results are cached for
-        efficient reuse.
+        This method processes the entire `dataset_model` to find the maximally
+        activating input examples for each component in the specified layers.
+        If a valid cache is found, the results are loaded directly from disk,
+        skipping the computation. Otherwise, the computation is performed and
+        the results are saved to the cache.
 
         Parameters
         ----------
         batch_size : int, default=32
-            Batch size for processing the dataset.
+            The batch size to use for processing the dataset.
         num_workers : int, default=0
-            Number of worker processes for data loading.
+            The number of worker processes for the data loader.
 
         Returns
         -------
         dict
-            Dictionary mapping layer names to ActMax instances containing
-            the top activating samples for each component.
+            A dictionary mapping layer names to `ActMax` instances, which
+            contain the top activating samples for each component.
         """
         if self._cache_root is None:
             logger.debug("No cache root provided, running computation...")
@@ -221,9 +339,7 @@ class ActivationComponentVisualizer(AbstractComponentVisualizer):
             return self._run(batch_size=batch_size, num_workers=num_workers)
 
     @torch.no_grad()
-    def _run(
-        self, batch_size: int = 64, num_workers: int = 0
-    ):  # -> dict[str, sl.ActMax]:# TODO other output than dict?
+    def _run(self, batch_size: int = 64, num_workers: int = 0):
         """Actuall ActMax-Cache computation/population and caching."""
         dataloader = torch.utils.data.DataLoader(
             self.dataset,
@@ -232,7 +348,7 @@ class ActivationComponentVisualizer(AbstractComponentVisualizer):
             num_workers=num_workers,
         )
         with self.actmax_cache.hook_context(self.model):
-            for i, (images, _) in tqdm(enumerate(dataloader), total=len(dataloader), desc="Processing dataset"):
+            for i, (images, _) in tqdm(enumerate(dataloader), total=len(dataloader), desc="Collecting ActMax"):
                 _ = self.model(images.to(self.device)).cpu()
 
         if self._cache_root:
@@ -242,9 +358,9 @@ class ActivationComponentVisualizer(AbstractComponentVisualizer):
         return self.actmax_cache.cache
 
     @torch.no_grad()
-    def compute_concept_db(self, lens, batch_size=32, **kwargs):
+    def _compute_concept_db(self, fm, batch_size=32, **kwargs):
         """
-        Compute the concept database for the given lens (foundation model).
+        Compute the concept database for the given fm (foundation model).
 
         This is called from the Lens class following the Inversion of Control pattern.
         The method processes the dataset to find maximally activating samples and then
@@ -252,7 +368,7 @@ class ActivationComponentVisualizer(AbstractComponentVisualizer):
 
         Parameters
         ----------
-        lens : FoundationModel
+        fm : FoundationModel
             The foundation model used for embedding the maximally activating samples.
         batch_size : int, default=32
             Batch size for processing.
@@ -264,10 +380,9 @@ class ActivationComponentVisualizer(AbstractComponentVisualizer):
         dict
             Dictionary mapping layer names to embedded concept representations.
         """
-        # TODO replace lens argument with fm argument? we only require the fm atm
         self.run(batch_size=batch_size, **kwargs)
 
-        embeds = self._embed_vision_dataset(lens, batch_size, **kwargs)
+        embeds = self._embed_vision_dataset(fm, batch_size, **kwargs)
 
         concept_db = dict()
         for layer_name in self.layer_names:
@@ -293,26 +408,28 @@ class ActivationComponentVisualizer(AbstractComponentVisualizer):
             Tensor of shape (dataset_size, embedding_dim) containing embeddings
             for all samples in the dataset.
 
-        Notes
-        -----
-        TODO: Implement caching for efficiency in repeated calls.
         """
-        # TODO implement caching!
-        fm.to(self.device)  # this need to also set the correct device after preprocessing!
+        fm.to(self.device)
 
-        # temporarily replacing the dataset-transform with the fm-specific one
-        # with self.dataset.apply_preprocessing(fm.preprocessing):
-        dataloader = torch.utils.data.DataLoader(self.dataset_fm, batch_size=batch_size, shuffle=False, **kwargs)
+        def pil_list_collate(batch):
+            """We apply the FM transformation (via fm.preprocess) lazy, thus the dataset_fm returns PILs and a special collate implemenation is needed."""
+            if isinstance(batch[0], (tuple, list)):
+                return [item[0] for item in batch]
+            return list(batch)
+
+        pil_dataloader = torch.utils.data.DataLoader(
+            self.dataset_fm, batch_size=batch_size, shuffle=False, collate_fn=pil_list_collate, **kwargs
+        )
         embeds = []
-        with tqdm(total=len(self.dataset), desc="Embedding dataset...") as pbar_dataset:
-            for batch in dataloader:
-                data = batch[0] if isinstance(batch, (tuple, list)) else batch
-                fm_out = fm.encode_image(data.to(self.device)).cpu()  # FIXME ensure the abc works out!
+        with tqdm(total=len(self.dataset), desc="Embedding Dataset") as pbar_dataset:
+            for pil_list in pil_dataloader:
+                inputs = fm.preprocess(pil_list)
+                fm_out = fm.encode_image(inputs).cpu()
                 embeds.append(fm_out)
                 pbar_dataset.update(batch_size)
         embeds = torch.cat(embeds)
 
-        assert embeds.shape[0] == len(self.dataset), "Number of embeddings does not match number of ids!"
+        assert embeds.shape[0] == len(self.dataset_fm), "Number of embeddings does not match number of ids!"
         return embeds
 
     def get_max_reference(self, layer_name) -> torch.Tensor:
@@ -333,7 +450,15 @@ class ActivationComponentVisualizer(AbstractComponentVisualizer):
         self._check_layer_name(layer_name)
         return self.actmax_cache.cache[layer_name].sample_ids
 
-    def visualize_components(self, component_ids: torch.Tensor, layer_name: str, n_samples: int = 9, nrows: int = 3):
+    def visualize_components(
+        self,
+        component_ids: torch.Tensor,
+        layer_name: str,
+        n_samples: int = 9,
+        nrows: int = 3,
+        fname=None,
+        denormalization_fn=None,
+    ):
         """
         Visualize specific components by displaying their top activating samples.
 
@@ -349,15 +474,19 @@ class ActivationComponentVisualizer(AbstractComponentVisualizer):
             Number of top activating samples to display per component.
         nrows : int, default=3
             Number of rows in the grid layout for each component.
+        denormalization_fn : callable, optional
+            Function to denormalize the images before visualization.
         """
         self._check_layer_name(layer_name)
         import matplotlib.pyplot as plt
         from torchvision.utils import make_grid
 
-        if hasattr(self.dataset, "invert_normalization"):
-            post_process = self.dataset.invert_normalization
+        if hasattr(self.dataset, "denormalization_fn"):
+            post_process = self.dataset.denormalization_fn
+        elif denormalization_fn is not None:
+            post_process = denormalization_fn
         else:
-            logger.debug("Dataset does not have invert_normalization method.")
+            logger.debug("Dataset does not have denormalization_fn method.")
 
             def post_process(x):
                 return x
@@ -396,18 +525,22 @@ class ActivationComponentVisualizer(AbstractComponentVisualizer):
         for i in range(n_pics, len(axs)):
             axs[i].axis("off")
 
-        plt.suptitle(f"{self.model.name} {layer_name}", fontsize=16)
+        plt.suptitle((f"{fname:.15} " if fname else "") + f"{self.model.name:>.10} {layer_name:<.15}", fontsize=16)
 
         plt.tight_layout(rect=[0, 0, 1, 0.96])
         plt.show()
-        if self._cache_root:
+        if self.caching:
             component_id_str = "-".join(map(str, component_ids.tolist()))
             fdir = self.storage_dir / "plots"
             fdir.mkdir(parents=True, exist_ok=True)
-            fpath = fdir / f"{layer_name}_{component_id_str}.png"
+            fpath = fdir / ((fname + "_" if fname else "") + f"{layer_name}_{component_id_str}.png")
             plt.savefig(fpath)
             plt.close(fig)
-            logger.info(f"Saved visualization to {fpath}")
+            print(f"Saved visualization to {fpath}")
+        elif fname:
+            logger.warning(
+                f"Failed to save visualization to {fpath} caching is not enabled in the ComponentVisualizer (`cv.caching: False`)"
+            )
 
     def _check_layer_name(self, layer_name):
         """
@@ -425,238 +558,3 @@ class ActivationComponentVisualizer(AbstractComponentVisualizer):
         """
         if layer_name not in self.layer_names:
             raise ValueError(f"Layer '{layer_name}' not found in model layers: {self.layer_names}")
-
-
-# class ActivationComponentVisualizer(AbstractComponentVisualizer):
-#     """
-#     Component visualizer using activation maximization.
-
-#     This class finds and visualizes the input examples that most strongly
-#     activate specific neural network components using activation caching
-#     and maximization techniques.
-
-#     Parameters
-#     ----------
-#     model : torch.nn.Module
-#         The neural network model to analyze.
-#     dataset : torch.utils.data.Dataset # TODO we need a certain type of datasets!
-#         Dataset containing input examples for analysis.
-#     layer_names : list of str
-#         Names of the layers to analyze.
-#     storage_dir : Path, default=Path("cache")/"concept_examples"
-#         Directory for caching activation maxima.
-#     aggregation_fn : str, default="max"
-#         Function used for aggregating activations.
-#     device : torch.device or str, optional
-#         Device for computations. If None, uses model's device.
-#     num_samples : int, default=100
-#         Number of top activating samples to collect per component.
-#     **kwargs
-#         Additional keyword arguments.
-
-#     Attributes
-#     ----------
-#     model : torch.nn.Module
-#         The neural network model being analyzed.
-#     dataset : torch.utils.data.Dataset
-#         Dataset for finding maximally activating examples.
-#     aggregate_fn : str
-#         Aggregation function for activations.
-#     num_samples : int
-#         Number of samples to collect per component.
-#     device : torch.device
-#         Device for computations.
-#     storage_dir : Path
-#         Directory for caching results.
-#     actmax_cache : ActMaxCache
-#         Cache for storing activation maxima.
-
-#     Methods
-#     -------
-#     run(batch_size=32, num_workers=None)
-#         Run activation maximization analysis.
-#     get_max_reference(concept_ids, layer_name, n_ref, batch_size=32)
-#         Get reference examples for specified concepts.
-#     get_act_max_sample_ids(layer_name)
-#         Get sample IDs of maximally activating examples.
-#     to(device)
-#         Move model to specified device.
-
-#     Properties
-#     ----------
-#     metadata : dict
-#         Metadata about the visualizer configuration.
-#     """
-
-#     def __init__(
-#         self,
-#         model,
-#         dataset,
-#         layer_names,
-#         storage_dir=Path("cache") / "concept_examples",
-#         aggregation_fn="max",
-#         device=None,
-#         num_samples=100,
-#         **kwargs,
-#     ):
-#         self.model = model
-#         self.dataset = dataset
-#         self._layer_names = layer_names
-#         self.aggregate_fn = aggregation_fn
-#         self.num_samples = num_samples
-#         self.device = device
-#         self.model.to(self.device)
-#         self.storage_dir = Path(storage_dir)
-
-#         self.actmax_cache = ActMaxCache(self.layer_names, n_collect=self.num_samples, aggregation_fn=self.aggregate_fn)
-#         self._ran = False
-
-#     def run(
-#         self,
-#         batch_size=32,
-#         num_workers=None,
-#     ):
-#         """
-#         Run activation maximization analysis on the dataset.
-
-#         Processes the entire dataset to find maximally activating examples
-#         for each component in the specified layers. Results are cached for
-#         efficient reuse.
-
-#         Parameters
-#         ----------
-#         batch_size : int, default=32
-#             Batch size for processing the dataset.
-#         num_workers : int, optional
-#             Number of worker processes for data loading.
-
-#         Notes
-#         -----
-#         If cached results exist and are valid, they will be loaded instead
-#         of recomputing. The cache is saved automatically after computation.
-#         """
-#         try:
-#             self.actmax_cache = ActMaxCache.load(self.storage_dir)
-#             logger.debug("Cache loaded from %s", self.storage_dir)
-#             self._ran = True
-#             return
-#         except FileNotFoundError:
-#             pass
-
-#         device = next(self.model.parameters()).device
-#         dataloader = torch.utils.data.DataLoader(
-#             self.dataset,
-#             batch_size=batch_size,
-#             shuffle=False,
-#             num_workers=num_workers,
-#         )
-#         with self.actmax_cache.hook_context(self.model):
-#             for i, (images, _) in tqdm(enumerate(dataloader), total=len(dataloader), desc="Processing dataset"):
-#                 _ = self.model(images.to(device)).cpu()
-
-#         self.actmax_cache.store(self.storage_dir)
-#         logger.debug("Cache saved at ", self.storage_dir)
-#         self._ran = True
-
-#     def get_max_reference(self, concept_ids: int | list, layer_name: str, n_ref: int, batch_size: int = 32):
-#         """
-#         Get reference samples for specified concepts.
-
-#         Currently not implemented for ActivationComponentVisualizer.
-
-#         Parameters
-#         ----------
-#         concept_ids : int or list of int
-#             IDs of concepts to get references for.
-#         layer_name : str
-#             Name of the layer containing the concepts.
-#         n_ref : int
-#             Number of reference examples to retrieve.
-#         batch_size : int, default=32
-#             Batch size for processing.
-
-#         Raises
-#         ------
-#         NotImplementedError
-#             This method is not yet implemented for this visualizer.
-#         """
-#         raise NotImplementedError(
-#             f"`get_max_reference` is not yet implemented for {self.__class__.__name__} but will be available soon."
-#         )
-#         # [ ] TODO act/grad-based cropping lxt like approach?
-#         # r_range = (0, n_ref) if isinstance(n_ref, int) else n_ref
-#         results = {}
-#         for i, (ids, acts) in tqdm(self.get_max(concept_ids, layer_name).items()):
-#             # samples = [to_pil_image(self.dataset[i][0])  if return_pil else self.dataset[i][0] for i in ids]
-#             samples = [to_pil_image(self.dataset[i][0]) for i in ids]
-#             results[i] = MaxSamples(samples, acts)
-
-#         return results
-
-#     def get_act_max_sample_ids(self, layer_name: str):
-#         """
-#         Get sample IDs of maximally activating samples for a layer.
-
-#         Parameters
-#         ----------
-#         layer_name : str
-#             Name of the layer to get sample IDs for.
-
-#         Returns
-#         -------
-#         torch.Tensor
-#             Tensor of shape (n_components, n_samples) containing the dataset
-#             indices of maximally activating samples for each component.
-#         """
-#         return self.actmax_cache.cache[layer_name].sample_ids
-
-#     def __repr__(self):
-#         """
-#         Return string representation of the visualizer.
-
-#         Returns
-#         -------
-#         str
-#             Detailed string representation including model, dataset, and configuration.
-#         """
-#         return (
-#             "ActBasedFeatureVisualization("
-#             + f"\n\tmodel={self.model.__class__.__name__},"
-#             + f"\n\tdataset={self.dataset.__class__.__name__},"
-#             + f"\n\tstorage_dir={self.storage_dir},"
-#             + f"\n\taggregation_fn={self.aggregate_fn},"
-#             + f"\n\tactmax_cache={self.actmax_cache},\n)"
-#         )
-
-#     def to(self, device: torch.device | str):
-#         """
-#         Move model to specified device.
-
-#         Parameters
-#         ----------
-#         device : torch.device or str
-#             Target device for the model.
-
-#         Returns
-#         -------
-#         ActivationComponentVisualizer
-#             Self for method chaining.
-#         """
-#         self.model.to(device)
-#         self.device = device
-#         return self
-
-#     @property
-#     def metadata(self) -> dict:
-#         """
-#         Get metadata about the visualizer configuration.
-
-#         Returns
-#         -------
-#         dict
-#             Dictionary containing aggregation function and cache information.
-#         """
-#         return {
-#             "aggregation_fn": self.aggregate_fn,
-#             "actmax_cache": repr(self.actmax_cache),
-#         }

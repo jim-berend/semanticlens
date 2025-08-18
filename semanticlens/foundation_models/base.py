@@ -8,16 +8,13 @@ implementations.
 
 from abc import ABC, abstractmethod
 
-import torch
 
-
-class VisionLanguageFoundationModel(ABC):
+class AbstractVLM(ABC):
     """
     Abstract base class for vision-language foundation models.
 
     This class defines the interface that all vision-language foundation models
     must implement, providing methods for encoding both vision and text inputs.
-    # TODO cleanup!
     """
 
     @abstractmethod
@@ -59,13 +56,9 @@ class VisionLanguageFoundationModel(ABC):
         pass
 
     @abstractmethod
-    def preprocess(
-        self, img: torch.Tensor
-    ):  # TODO type hinting not entirely correct since we except list and pil images later ! remove or replace.
+    def preprocess(self, img):
         """
         Preprocess image input for model consumption.
-
-        # TODO make clear that device and dimension-expansion should also happen here
 
         Parameters
         ----------
@@ -83,8 +76,6 @@ class VisionLanguageFoundationModel(ABC):
     def tokenize(self, txt: str):
         """
         Tokenize text input for model consumption.
-
-        # TODO see preprocess todos.
 
         Parameters
         ----------
@@ -109,8 +100,7 @@ class VisionLanguageFoundationModel(ABC):
         torch.device
             The device (CPU/GPU) on which the model parameters are located.
         """
-        # return next(self.model.parameters()).device
-        ...
+        pass
 
     @abstractmethod
     def to(self, device):
@@ -127,4 +117,4 @@ class VisionLanguageFoundationModel(ABC):
         VisionLanguageFoundationModel
             The model instance after moving to the specified device.
         """
-        ...
+        pass

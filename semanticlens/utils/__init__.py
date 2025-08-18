@@ -11,3 +11,13 @@ activation_caching
 render
     Image visualization and rendering utilities for semantic analysis.
 """
+
+from semanticlens.utils.helper import get_fallback_name, get_unnormalization_transform, to_transforms_compose
+from semanticlens.utils.log_setup import setup_colored_logging
+
+__all__ = [
+    "get_fallback_name",
+    "get_unnormalization_transform",
+    "to_transforms_compose",
+    "setup_colored_logging",
+]

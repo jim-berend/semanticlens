@@ -25,6 +25,7 @@ check:
 test:
 	python -m pytest tests/
 
-.PHONY: test-all
-test-all:
-	python -m pytest tests/ --runslow
+.PHONY: test-cov
+test-cov:
+	python -m pytest tests/ --cov=semanticlens --cov-report=term-missing --cov-fail-under=85
+

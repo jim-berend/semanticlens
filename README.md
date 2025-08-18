@@ -1,108 +1,152 @@
 <div align="center">
-  <img src="static/images/logo-with-name_big.svg" width="350"/>
-  <p>An open-source pytorch implementation of SemanticLens.
+  <img src="static/images/logo-with-name_big.svg" width="400px" alt="SemanticLens logo" align="center" />
+  <p>
+  An open-source PyTorch library for interpreting and validating large vision models.
+  <br>
+  Read the paper now as part of <a href="https://www.nature.com/articles/s42256-025-01084-w">Nature Machine Intelligence</a> (Open Access).
   </p>
 </div>
 
-[![arXiv](https://img.shields.io/badge/arXiv-2501.05398-b31b1b.svg)](https://arxiv.org/abs/2501.05398)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15233581.svg)](https://doi.org/10.5281/zenodo.15233581)
-
-
-
-<!-- ![Tests status](https://img.shields.io/badge/...) -->
-
-<!-- ## Overview
-
-...
+<br>
 
 <div align="center">
-  <img src="./static/images/overview.svg" width="1000"/>å
-  <p>
-  Tools:
-  <a href="./test.txt">Search</a>,
-  <a href="./test.txt">Describe</a>,
-  <a href="./test.txt">Compare</a>,
-  <a href="./test.txt">Audit</a>,
-  <a href="./test.txt">Assess Interpretability</a>
-  </p>
+  <a href="https://www.nature.com/articles/s42256-025-01084-w">
+    <img  src="https://img.shields.io/static/v1?label=Nature&message=Machine%20Intelligence&color=green">
+  </a>
+  <!-- <a href="https://arxiv.org/abs/2501.05398">
+    <img alt="arXiv" src="https://img.shields.io/badge/arXiv-2501.05398-b31b1b.svg">
+  </a> -->
+  <a href="https://doi.org/10.5281/zenodo.15233581">
+    <img alt="DOI" src="https://zenodo.org/badge/DOI/10.5281/zenodo.15233581.svg">
+  </a>
+  <img  src="https://img.shields.io/badge/Python-3.9, 3.10, 3.11-efefef">
+  <a href="LICENSE">
+    <img alt="DOI" src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg">
+  </a>
 </div>
 
 
+**SemanticLens** is a universal framework for explaining and validating large vision models. While deep learning models are powerful, their internal workings are often a "black box," making them difficult to trust and debug. SemanticLens addresses this by mapping the internal components of a model (like neurons or filters) into the rich, semantic space of a foundation model (e.g., CLIP or SigLIP).
 
-Examples -->
+This allows you to "translate" what the model is doing into a human-understandable format, enabling you to search, analyze, and audit its internal representations.
+
+
+## How It Works
+
+
+<div align="center">
+  <img src="static/images/overview-figure.svg" width="90%" alt="Overview figure" align="center" />
+  <p>
+  Overview of the SemanticLens framework as introduced in our <a href="https://www.nature.com/articles/s42256-025-01084-w"> research paper.</a>
+
+  </p>
+</div>
+
+The core workflow of SemanticLens involves three main steps:
+1) **Collect**: For each component in a model M, we identify the data samples that cause the highest activation (the "concept examples").
+We provide a suite of [`ComponentVisualizers`](semanticlens/component_visualization) that implement different strategies, from simple activation maximization to relevance-maximization and attribution-based cropping.
+
+2) **Embed**: These examples are then fed into a foundation model (like CLIP), which creates a meaningful vector representation for each component. SemanticLens includes built-in support for [OpenCLIP](https://github.com/mlfoundations/open_clip) and can be easily extended with other foundation models (see [base.py](semanticlens/foundation_models/base.py)).
+
+
+3) **Analyze**: These vector representations enable powerful analyses. The [`Lens`](semanticlens/lens.py) class is the main interface for this, orchestrating the preprocessing, caching, and evaluation needed to search and audit your model using its new semantic embeddings.
+
 
 ## Installation
+
+You can install SemanticLens directly from PyPI:
 ```bash
 pip install semanticlens
 ```
 
-## Quickstart
+To install the latest version from this repository:
 
+```bash
+pip install git+https://github.com/jim-berend/semanticlens.git
+```
+
+## Quickstart
+Example usage:
 ```python
 import semanticlens as sl
 
-# step 1 - collect component-examples
+... # dataset and model setup
 
-act_cv = sl.component_visualization.ActivationComponentVisualizer(
+# Initialization
+
+cv = sl.component_visualization.ActivationComponentVisualizer(
     model,
-    dataset,
-    layer_names,
+    dataset_model,
+    dataset_fm,
+    layer_names=layer_names,
+    device=device,
+    cache_dir=cache_dir,
 )
-act_cv.run(batch_size=128, num_workers=16)
 
-# step 2 - compute semantic embeddings
+fm = sl.foundation_models.OpenClip(url="RN50", pretrained="openai", device=device)
 
-fm = sl.foundation_models.OpenClip("hf-hub:apple/MobileCLIP-S2-OpenCLIP")
-lens = sl.Lens(
-    dataset=dataset,
-    component_visualizer=act_cv,
-    foundation_model=fm,
-    dataset_name="...", # e.g. "imagenet"
-    storage_dir="...", # e.g. "cache"
-)
-lens.compute_semantic_embeddigs(layer_names)
+lens = sl.Lens(fm, device=device)
 
-# step 3 - inspect, search, label, evaluate, ...
+# Semantic Embedding 
 
-lens.label(
-  ["wall", "small", "sky", "floor", "red",...],
-  templates=["a natural image showing {}"],
-) # ("layer3", 95): "brown vegetation" ,...
+concept_db = lens.compute_concept_db(cv, batch_size=128, num_workers=8)
+aggregated_cpt_db = {k: v.mean(1) for k, v in concept_db.items()}
 
-lens.search("watermark") # ("layer4", [63, 21, 362]), ...
+# Analysis
 
-lens.eval_clarity() # {"layer4" : [[0.64, 0.32, ... ]]}
+polysemanticity_scores = lens.eval_polysemanticity(concept_db)
 
+search_results = lens.text_probing(["cats", "dogs"], aggregated_cpt_db)
+
+...
 ```
+<a href="tutorials/quickstart.ipynb">
+<img  src="https://img.shields.io/badge/Tutorial-Quickstart.ipynb-2881db">
+</a>
 
-## Project status
-
-> **Note**  
-> The project is currently under active development.  🛠️  
-> Please expect interfaces to change.
- 
-The state of development will be updated here.
+Full quickstart guide: [quickstart.ipynb](tutorials/quickstart.ipynb)
 
 
+<a href="...">
+<img  src="https://img.shields.io/badge/Docs-SemanticLens-ff8c00">
+</a>
+
+Package documentation: [docs](...) 
 
 ## Contributing
 
-We adhere to the [PEP8](https://www.python.org/dev/peps/pep-0008) standard with a maximum line width of 120 characters.  
-For linting and style checks, we use `ruff`, configured to enforce PEP8 compliance along with additional rules.  
-Our basic tests are implemented using `pytest`.
+We welcome contributions to SemanticLens! Whether you're fixing a bug, adding a new feature, or improving the documentation, your help is appreciated. 
 
+If you'd like to contribute, please follow these steps:
+1. Fork the repository on GitHub.
+2. Create a new branch for your feature or bug fix (git checkout -b feature/your-feature-name).
+3. Make your changes and commit them with a clear message.
+4. Open a pull request to the main branch of the original repository.
+
+For bug reports or feature requests, please use the GitHub Issues section. Before starting work on a major change, it's a good idea to open an issue first to discuss your plan.
 
 ## License
 
-BSD 3-Clause License
+[BSD 3-Clause License](LICENSE)
 
 
-### Citation
+## Citation
 ```
-@article{dreyer2025mechanistic,
-  title={Mechanistic understanding and validation of large AI models with SemanticLens},
-  author={Dreyer, Maximilian and Berend, Jim and Labarta, Tobias and Vielhaben, Johanna and Wiegand, Thomas and Lapuschkin, Sebastian and Samek, Wojciech},
-  journal={arXiv preprint arXiv:2501.05398},
-  year={2025}
+@article{dreyer_mechanistic_2025,
+	title = {Mechanistic understanding and validation of large {AI} models with {SemanticLens}},
+	copyright = {2025 The Author(s)},
+	issn = {2522-5839},
+	url = {https://www.nature.com/articles/s42256-025-01084-w},
+	doi = {10.1038/s42256-025-01084-w},
+	language = {en},
+	urldate = {2025-08-18},
+	journal = {Nature Machine Intelligence},
+	author = {Dreyer, Maximilian and Berend, Jim and Labarta, Tobias and Vielhaben, Johanna and Wiegand, Thomas and Lapuschkin, Sebastian and Samek, Wojciech},
+	month = aug,
+	year = {2025},
+	note = {Publisher: Nature Publishing Group},
+	keywords = {Computer science, Information technology},
+	pages = {1--14},
 }
 ```
+

@@ -1,54 +1,49 @@
 """Helpers to collect, aggregate, and cache activations in PyTorch.
 
-This module provides classes and utilities for collecting, aggregating, and caching
-neural network activations during inference.
+This module provides classes for efficiently collecting, aggregating, and
+caching neural network activations during inference. It is designed to be
+flexible and robust, supporting custom aggregation logic and providing an
+object-oriented API for saving and loading the cache.
 
-Key Principles:
----------------
-- **Dependency Injection**: `ActMaxCache` accepts any callable aggregation function,
-  allowing for maximum flexibility.
-- **Simplified Class Structure**: The core logic is consolidated into fewer classes,
-  making the module easier to understand and maintain.
-- **Object-Oriented I/O**: The cache can be saved and loaded directly from the
-  instance (e.g., `cache.store(path)`) and the class (`ActMaxCache.load(path, ...)`),
-  providing a convenient, object-oriented API.
+The main classes are `ActMax`, which stores the top-k activations for a single
+layer, and `ActMaxCache`, which manages the process of hooking into a model and
+populating `ActMax` instances for multiple layers.
 
-Workflow Example:
------------------
+Workflow Example
+----------------
 >>> import torch
->>> import torchvision
+>>> from torch.utils.data import TensorDataset
+>>> from torchvision.models import resnet18
 >>> from pathlib import Path
->>> from your_project import aggregators # Assuming aggregators.py exists
-
->>> # 1. Define the map of all available aggregation functions.
->>> AGG_FUNC_MAP = {"aggregate_conv_mean": aggregators.aggregate_conv_mean}
-
->>> # 2. Instantiate the cache with a specific aggregation function.
->>> model = torchvision.models.resnet18()
+>>> from semanticlens.component_visualization import aggregators
+>>> from semanticlens.component_visualization.activation_caching import ActMaxCache
+>>>
+>>> model = resnet18()
+>>> layer_names = ["layer4.1.conv2"]
+>>> dataset = TensorDataset(torch.randn(100, 3, 224, 224))
+>>> dataloader = torch.utils.data.DataLoader(dataset, batch_size=32)
+>>>
+>>> # 1. Instantiate the cache.
 >>> cache = ActMaxCache(
-...     layer_names=["layer4.1.conv2"],
+...     layer_names=layer_names,
 ...     aggregation_fn=aggregators.aggregate_conv_mean,
-...     n_collect=128
+...     n_collect=10
 ... )
-
->>> # 3. Run the model to collect activations.
->>> # with cache.hook_context(model):
-...     # for batch in dataloader: model(batch[0])
-
->>> # 4. Save the populated cache using the instance method.
->>> cache.store(Path("./my_resnet_cache"))
-
->>> # 5. Load the cache later using the classmethod.
->>> loaded_cache = ActMaxCache.load(Path("./my_resnet_cache"), AGG_FUNC_MAP)
->>> print(f"Successfully loaded: {loaded_cache}")
-# TODO cleanup!
+>>>
+>>> # 2. Run the model within the hook context to collect activations.
+>>> with cache.hook_context(model):
+...     for batch in dataloader:
+...         model(batch[0])
+>>>
+>>> # 3. Save the populated cache to disk.
+>>> cache.store(Path("./my_cache"))
 """
 
 from __future__ import annotations
 
 import inspect
 import logging
-from collections import OrderedDict
+from collections import Counter, OrderedDict
 from collections.abc import Callable
 from contextlib import contextmanager
 from pathlib import Path
@@ -361,7 +356,7 @@ class ActMaxCache(ActCache):
         super().__init__(layer_names)
         self.aggregation_fn = aggregation_fn
         self.n_collect = n_collect
-        self.sample_idx_counter = 0
+        self.sample_idx_counter = Counter()
 
         agg_fn_name = getattr(self.aggregation_fn, "__name__", None)
         if agg_fn_name is None or agg_fn_name == "<lambda>":
@@ -370,7 +365,27 @@ class ActMaxCache(ActCache):
 
         self.cache: dict[str, ActMax] = {name: ActMax(n_collect=n_collect) for name in layer_names}
 
-    def _get_hook(self, name: str) -> Callable:
+    def __getitem__(self, layer_name: str) -> ActMax:
+        """
+        Get the ActMax instance for a specific layer.
+
+        Parameters
+        ----------
+        layer_name : str
+            Name of the layer to retrieve.
+
+        Returns
+        -------
+        ActMax
+            The ActMax instance associated with the specified layer.
+        """
+        return self.cache[layer_name]
+
+    def __iter__(self):
+        """Return an iterator over the ActMax instances in the cache."""
+        return iter(self.cache.values())
+
+    def _get_hook(self, layer_name: str) -> Callable:
         """
         Create a hook that aggregates activations and updates the ActMax instance.
 
@@ -392,11 +407,13 @@ class ActMaxCache(ActCache):
             assert aggregated_acts.ndim == 2, "Something is wrong with the aggregation_fn"
 
             # Generate sample IDs for this batch
-            sample_ids = torch.arange(self.sample_idx_counter, self.sample_idx_counter + batch_size)
-            self.sample_idx_counter += batch_size
+            sample_ids = torch.arange(
+                self.sample_idx_counter[layer_name], self.sample_idx_counter[layer_name] + batch_size
+            )
+            self.sample_idx_counter[layer_name] += batch_size
 
             # Update the corresponding ActMax instance
-            self.cache[name].update(aggregated_acts, sample_ids)
+            self.cache[layer_name].update(aggregated_acts, sample_ids)
 
         return hook_fn
 

@@ -5,7 +5,6 @@ This module provides concrete implementations of various CLIP model variants,
 including OpenCLIP, SigLIP V2, and MobileCLIP models for encoding both
 images and text into a shared embedding space.
 
-# TODO refine
 
 Classes
 -------
@@ -22,10 +21,10 @@ from __future__ import annotations
 import torch
 from PIL import Image
 
-from semanticlens.foundation_models.base import VisionLanguageFoundationModel
+from semanticlens.foundation_models.base import AbstractVLM
 
 
-class OpenClip(VisionLanguageFoundationModel):
+class OpenClip(AbstractVLM):
     """
     OpenCLIP vision-language model implementation.
 
@@ -50,18 +49,28 @@ class OpenClip(VisionLanguageFoundationModel):
         Text tokenization function.
     """
 
-    def __init__(self, url, device="cpu"):
+    def __init__(self, url, device="cpu", **kwargs):
         import open_clip
 
-        model, _, preprocess = open_clip.create_model_and_transforms(
-            url,
-        )
+        model, _, preprocess = open_clip.create_model_and_transforms(url, **kwargs)
         tokenizer = open_clip.get_tokenizer(url)
 
+        self.url = url
         self.model = model.eval().to(device)
 
         self.preprocessor = preprocess
         self.tokenizer = tokenizer
+
+    def __repr__(self):
+        """
+        Return a string representation of the ClipMobile instance.
+
+        Returns
+        -------
+        str
+            String representation including the model version and device.
+        """
+        return f"{self.__class__.__name__}(url='{self.url}', model={self.model.__class__.__name__})"
 
     @property
     def device(self):
@@ -198,8 +207,8 @@ class SigLipV2(OpenClip):
 
     URL = "hf-hub:timm/ViT-B-16-SigLIP2"
 
-    def __init__(self, device="cpu"):
-        super().__init__(url=self.URL, device=device)
+    def __init__(self, device="cpu", **kwargs):
+        super().__init__(url=self.URL, device=device, **kwargs)
 
 
 class ClipMobile(OpenClip):
@@ -224,54 +233,15 @@ class ClipMobile(OpenClip):
 
     URLs = dict(s1="MobileCLIP-S1", s2="MobileCLIP-S2")
 
-    def __init__(self, version="s1", device="cpu"):
+    def __init__(self, version="s1", device="cpu", **kwargs):
         import open_clip
 
-        model, _, preprocess = open_clip.create_model_and_transforms(self.URLs[version], pretrained="datacompdr")
+        model, _, preprocess = open_clip.create_model_and_transforms(
+            self.URLs[version], pretrained="datacompdr", **kwargs
+        )
         tokenizer = open_clip.get_tokenizer(self.URLs[version])
 
         self.model = model.eval().to(device)
-
+        self.url = self.URLs[version]
         self.preprocessor = preprocess
         self.tokenizer = tokenizer
-
-    @staticmethod
-    def _test():
-        # TODO (re)move!
-        def load_dummy_image_via_request():
-            # Load a dummy image from the internet
-            from io import BytesIO
-
-            import requests
-            # from PIL import Image
-
-            url = "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png"
-            response = requests.get(url)
-            img = Image.open(BytesIO(response.content))
-
-            return img.convert("RGB")
-
-        model = ClipMobile(use_half=True, device="cpu", version="s1")
-        img = load_dummy_image_via_request()
-        text = ["This is a test sentence.", "one di", "two dice", "three dice"]
-
-        text_input = model.tokenize(text)
-        img_input = model.preprocess(img).unsqueeze(0)  # Add batch dimension
-
-        img_features = model.encode_image(img_input)
-        text_features = model.encode_text(text_input)
-
-        scores = img_features @ text_features.T
-
-        print("-" * 80)
-        print("Testing CLIP MobileS model")
-        print("-" * 80)
-        print("texts", text)
-        print("Scores shape:", scores)
-        if scores.argmax() == text.index("three dice"):
-            print("Correctly identified the last text as the best match.")
-        else:
-            print("Did not identify the last text as the best match.")
-
-        print("Image features shape:", img_features.shape)
-        print("Text features shape:", text_features.shape)

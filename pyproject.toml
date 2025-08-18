@@ -27,8 +27,12 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "furo>=2025.7.19",
     "pytest>=8.4.1",
     "pytest-cov>=6.2.1",
+    "pytest-mock>=3.14.1",
+    "sphinx>=7.4.7",
+    "sphinx-rtd-theme>=3.0.2",
     "tox>=4.28.4",
     "tox-uv>=1.27.0",
 ]

@@ -71,12 +71,8 @@ def redundancy_score(cones):
     >>> cones = torch.randn(10, 512)  # 10 neurons, 512 features
     >>> redundancy = redundancy_score(cones)
     >>> redundancy.shape
-    torch.Size([10])
+    torch.Size([])
     """
-    # TODO this can be done on two levels: 1) within one neuron across the concept examples 2) across the neurons
-    # V.shape = (n_neurons) x n_samples x n_features
-    # compute pairwise similarities across samples and ignore the ones with itself and for each element take the maximal
-    # one
     device = cones.device
     cones_nrmed = torch.nn.functional.normalize(cones, dim=-1)
     sims = torch.matmul(cones_nrmed, cones_nrmed.swapaxes(-1, -2))

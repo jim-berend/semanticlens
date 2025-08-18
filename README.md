@@ -23,6 +23,9 @@
   <a href="LICENSE">
     <img alt="DOI" src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg">
   </a>
+  <a href="https://jim-berend.github.io/semanticlens/">
+    <img  src="https://img.shields.io/badge/Docs-SemanticLens-ff8c00">
+  </a>
 </div>
 
 
@@ -107,11 +110,11 @@ search_results = lens.text_probing(["cats", "dogs"], aggregated_cpt_db)
 Full quickstart guide: [quickstart.ipynb](tutorials/quickstart.ipynb)
 
 
-<a href="...">
+<a href="https://jim-berend.github.io/semanticlens/">
 <img  src="https://img.shields.io/badge/Docs-SemanticLens-ff8c00">
 </a>
 
-Package documentation: [docs](...) 
+Package documentation: [docs](https://jim-berend.github.io/semanticlens/) 
 
 ## Contributing
 

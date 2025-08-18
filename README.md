@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="static/images/logo-with-name_big.svg" width="400px" alt="SemanticLens logo" align="center" />
+  <img src="https://github.com/jim-berend/semanticlens/blob/be718f96ba7c52b29249ff7b4806999890895c72/static/images/logo-with-name_big.svg" width="400px" alt="SemanticLens logo" align="center" />
   <p>
   An open-source PyTorch library for interpreting and validating large vision models.
   <br>
@@ -39,7 +39,7 @@ This allows you to "translate" what the model is doing into a human-understandab
 
 
 <div align="center">
-  <img src="static/images/overview-figure.svg" width="90%" alt="Overview figure" align="center" />
+  <img src="https://github.com/jim-berend/semanticlens/blob/be718f96ba7c52b29249ff7b4806999890895c72/static/images/overview-figure.svg" width="90%" alt="Overview figure" align="center" />
   <p>
   Overview of the SemanticLens framework as introduced in our <a href="https://www.nature.com/articles/s42256-025-01084-w"> research paper.</a>
 

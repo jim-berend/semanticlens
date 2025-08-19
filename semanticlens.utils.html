@@ -7,8 +7,8 @@
         <link rel="prefetch" href="_static/logo-small.svg" as="image" />
         <link rel="prefetch" href="_static/logo-small.svg" as="image" />
 
-    <link rel="shortcut icon" href="_static/logo-small.svg"/><!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
-        <title>semanticlens.utils package - SemanticLens v0.2.0</title>
+    <link rel="shortcut icon" href="_static/logo-small.svg"/><!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
+        <title>semanticlens.utils package - SemanticLens v0.2.1</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -176,7 +176,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">SemanticLens v0.2.0</div></a>
+      <a href="index.html"><div class="brand">SemanticLens v0.2.1</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -203,7 +203,7 @@
     <img class="sidebar-logo only-dark" src="_static/logo-small.svg" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">SemanticLens v0.2.0</span>
+  <span class="sidebar-brand-text">SemanticLens v0.2.1</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -284,14 +284,8 @@
 <span id="semanticlens-utils-helper-module"></span><h2>semanticlens.utils.helper module<a class="headerlink" href="#module-semanticlens.utils.helper" title="Link to this heading">¶</a></h2>
 <p>Helper functions for SemanticLens.</p>
 <dl class="py function">
-<dt class="sig sig-object py" id="semanticlens.utils.helper.get_fallback_name">
-<span class="sig-prename descclassname"><span class="pre">semanticlens.utils.helper.</span></span><span class="sig-name descname"><span class="pre">get_fallback_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semanticlens/utils/helper.html#get_fallback_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semanticlens.utils.helper.get_fallback_name" title="Link to this definition">¶</a></dt>
-<dd><p>Function to get a fallback name for an object.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="semanticlens.utils.helper.get_unnormalization_transform">
-<span class="sig-prename descclassname"><span class="pre">semanticlens.utils.helper.</span></span><span class="sig-name descname"><span class="pre">get_unnormalization_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">tensor([0.4850,</span> <span class="pre">0.4560,</span> <span class="pre">0.4060])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">tensor([0.2290,</span> <span class="pre">0.2240,</span> <span class="pre">0.2250])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semanticlens/utils/helper.html#get_unnormalization_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semanticlens.utils.helper.get_unnormalization_transform" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="semanticlens.utils.helper.get_denormalization_transform">
+<span class="sig-prename descclassname"><span class="pre">semanticlens.utils.helper.</span></span><span class="sig-name descname"><span class="pre">get_denormalization_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">tensor([0.4850,</span> <span class="pre">0.4560,</span> <span class="pre">0.4060])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">tensor([0.2290,</span> <span class="pre">0.2240,</span> <span class="pre">0.2250])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semanticlens/utils/helper.html#get_denormalization_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semanticlens.utils.helper.get_denormalization_transform" title="Link to this definition">¶</a></dt>
 <dd><p>Return a transform to undo the normalization of an image tensor.</p>
 <p>This function creates a composition of transforms that reverses standard
 ImageNet normalization, which is useful for visualization purposes.</p>
@@ -311,6 +305,12 @@ ImageNet stds [0.229, 0.224, 0.225] for RGB channels.</p></li>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.8)">torch.nn.Module</a></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="semanticlens.utils.helper.get_fallback_name">
+<span class="sig-prename descclassname"><span class="pre">semanticlens.utils.helper.</span></span><span class="sig-name descname"><span class="pre">get_fallback_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semanticlens/utils/helper.html#get_fallback_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semanticlens.utils.helper.get_fallback_name" title="Link to this definition">¶</a></dt>
+<dd><p>Function to get a fallback name for an object.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -340,14 +340,14 @@ does not configure logging.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">semanticlens.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_colored_logging</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">setup_colored_logging</span><span class="p">(</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span> <span class="s2">&quot;path-to-logs/debug.log)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">semanticlens.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_colored_logging</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">setup_colored_logging</span><span class="p">(</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span> <span class="s2">&quot;path-to-logs/debug.log&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <dl class="py class">
 <dt class="sig sig-object py" id="semanticlens.utils.log_setup.ColorFormatter">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semanticlens.utils.log_setup.</span></span><span class="sig-name descname"><span class="pre">ColorFormatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semanticlens/utils/log_setup.html#ColorFormatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semanticlens.utils.log_setup.ColorFormatter" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semanticlens.utils.log_setup.</span></span><span class="sig-name descname"><span class="pre">ColorFormatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semanticlens/utils/log_setup.html#ColorFormatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semanticlens.utils.log_setup.ColorFormatter" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Formatter" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Formatter</span></code></a></p>
 <p>A custom formatter to add colors to log messages.</p>
 <dl class="py attribute">
@@ -525,7 +525,7 @@ to True.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_batch</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.8)"><em>torch.Tensor</em></a>) – original images from dataset without FeatureVisualization.preprocess() applied to it</p></li>
-<li><p><strong>heatmaps</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.8)"><em>torch.Tensor</em></a>) – ouput heatmap tensor of the CondAttribution call</p></li>
+<li><p><strong>heatmaps</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.8)"><em>torch.Tensor</em></a>) – output heatmap tensor of the CondAttribution call</p></li>
 <li><p><strong>rf</strong> (<em>boolean</em>) – Computes the CRP heatmap for a single neuron and hence restricts the heatmap to the receptive field.
 The amount of cropping is further specified by the ‘crop_th’ argument.</p></li>
 <li><p><strong>alpha</strong> (<em>between</em><em> [</em><em>0 and 1</em><em>]</em>) – Regulates the transparency in low relevance regions.</p></li>
@@ -560,14 +560,8 @@ image rendering, and visualization tasks used throughout the SemanticLens librar
 </dl>
 </section>
 <dl class="py function">
-<dt class="sig sig-object py" id="semanticlens.utils.get_fallback_name">
-<span class="sig-prename descclassname"><span class="pre">semanticlens.utils.</span></span><span class="sig-name descname"><span class="pre">get_fallback_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semanticlens/utils/helper.html#get_fallback_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semanticlens.utils.get_fallback_name" title="Link to this definition">¶</a></dt>
-<dd><p>Function to get a fallback name for an object.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="semanticlens.utils.get_unnormalization_transform">
-<span class="sig-prename descclassname"><span class="pre">semanticlens.utils.</span></span><span class="sig-name descname"><span class="pre">get_unnormalization_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">tensor([0.4850,</span> <span class="pre">0.4560,</span> <span class="pre">0.4060])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">tensor([0.2290,</span> <span class="pre">0.2240,</span> <span class="pre">0.2250])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semanticlens/utils/helper.html#get_unnormalization_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semanticlens.utils.get_unnormalization_transform" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="semanticlens.utils.get_denormalization_transform">
+<span class="sig-prename descclassname"><span class="pre">semanticlens.utils.</span></span><span class="sig-name descname"><span class="pre">get_denormalization_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">tensor([0.4850,</span> <span class="pre">0.4560,</span> <span class="pre">0.4060])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">tensor([0.2290,</span> <span class="pre">0.2240,</span> <span class="pre">0.2250])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semanticlens/utils/helper.html#get_denormalization_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semanticlens.utils.get_denormalization_transform" title="Link to this definition">¶</a></dt>
 <dd><p>Return a transform to undo the normalization of an image tensor.</p>
 <p>This function creates a composition of transforms that reverses standard
 ImageNet normalization, which is useful for visualization purposes.</p>
@@ -587,6 +581,12 @@ ImageNet stds [0.229, 0.224, 0.225] for RGB channels.</p></li>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.8)">torch.nn.Module</a></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="semanticlens.utils.get_fallback_name">
+<span class="sig-prename descclassname"><span class="pre">semanticlens.utils.</span></span><span class="sig-name descname"><span class="pre">get_fallback_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semanticlens/utils/helper.html#get_fallback_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semanticlens.utils.get_fallback_name" title="Link to this definition">¶</a></dt>
+<dd><p>Function to get a fallback name for an object.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -679,8 +679,8 @@ ImageNet stds [0.229, 0.224, 0.225] for RGB channels.</p></li>
 <li><a class="reference internal" href="#">semanticlens.utils package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-semanticlens.utils.helper">semanticlens.utils.helper module</a><ul>
+<li><a class="reference internal" href="#semanticlens.utils.helper.get_denormalization_transform"><code class="docutils literal notranslate"><span class="pre">get_denormalization_transform()</span></code></a></li>
 <li><a class="reference internal" href="#semanticlens.utils.helper.get_fallback_name"><code class="docutils literal notranslate"><span class="pre">get_fallback_name()</span></code></a></li>
-<li><a class="reference internal" href="#semanticlens.utils.helper.get_unnormalization_transform"><code class="docutils literal notranslate"><span class="pre">get_unnormalization_transform()</span></code></a></li>
 <li><a class="reference internal" href="#semanticlens.utils.helper.to_transforms_compose"><code class="docutils literal notranslate"><span class="pre">to_transforms_compose()</span></code></a></li>
 </ul>
 </li>
@@ -705,8 +705,8 @@ ImageNet stds [0.229, 0.224, 0.225] for RGB channels.</p></li>
 </li>
 <li><a class="reference internal" href="#module-semanticlens.utils">Module contents</a><ul>
 <li><a class="reference internal" href="#modules">Modules</a></li>
+<li><a class="reference internal" href="#semanticlens.utils.get_denormalization_transform"><code class="docutils literal notranslate"><span class="pre">get_denormalization_transform()</span></code></a></li>
 <li><a class="reference internal" href="#semanticlens.utils.get_fallback_name"><code class="docutils literal notranslate"><span class="pre">get_fallback_name()</span></code></a></li>
-<li><a class="reference internal" href="#semanticlens.utils.get_unnormalization_transform"><code class="docutils literal notranslate"><span class="pre">get_unnormalization_transform()</span></code></a></li>
 <li><a class="reference internal" href="#semanticlens.utils.setup_colored_logging"><code class="docutils literal notranslate"><span class="pre">setup_colored_logging()</span></code></a></li>
 <li><a class="reference internal" href="#semanticlens.utils.to_transforms_compose"><code class="docutils literal notranslate"><span class="pre">to_transforms_compose()</span></code></a></li>
 </ul>
@@ -722,7 +722,7 @@ ImageNet stds [0.229, 0.224, 0.225] for RGB channels.</p></li>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=938c9ccc"></script>
+</div><script src="_static/documentation_options.js?v=37f418d5"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

@@ -1,6 +1,6 @@
 [project]
 name = "semanticlens"
-version = "0.1.2"
+version = "0.2.0"
 description = "A package for mechanistic understanding and validation of large  AI model with SemanticLens"
 readme = "README.md"
 authors = [

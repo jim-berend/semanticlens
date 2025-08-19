@@ -128,6 +128,25 @@ Basic usage:
    contributing
    license
 
+
+
+
+Try It Out
+----------
+
+Want to explore SemanticLens without installing anything locally?  
+We provide a hosted **interactive demo** where you can experiment with the system right in your browser:
+
+🚀 **Live Demo**: https://semanticlens.hhi-research-insights.de/
+
+The demo includes:
+
+- A selection of **state-of-the-art vision models** already integrated and preprocessed.
+- An intuitive interface for **probing representations**, exploring **concept embeddings**, and visualizing results.
+- The same core functionality exposed by the :doc:`modules <modules>` in this documentation, so you can get a feel for how SemanticLens works before diving into the API.
+
+Use this demo as a lightweight way to **experiment with model interpretability** and get hands-on experience with SemanticLens—no setup, GPUs, or expensive compute required.
+
 Citation
 --------
 

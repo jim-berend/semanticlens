@@ -10,8 +10,8 @@ sys.path.insert(0, os.path.abspath("../../semanticlens"))
 project = "SemanticLens"
 copyright = "2025, Jim Berend"
 author = "Jim Berend"
-release = "0.1.2"
-version = "0.1.2"
+release = "0.2.0"
+version = "0.2.0"
 
 # -- General configuration ---------------------------------------------------
 extensions = [
@@ -138,7 +138,7 @@ html_extra_path = []
 
 # Logo and favicon
 # html_logo = "_static/logo-with-name_big.svg"
-# html_favicon = "_static/favicon.ico"
+html_favicon = "_static/logo-small.svg"
 
 # Show source links
 html_show_sourcelink = True

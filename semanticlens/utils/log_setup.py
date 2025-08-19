@@ -18,8 +18,8 @@ setup_colored_logging
 
 Example
 -------
->>> from semanticlens.logging import setup_colored_logging
->>> setup_colored_logging("DEBUG", "path-to-logs/debug.log)
+>>> from semanticlens.utils import setup_colored_logging
+>>> setup_colored_logging("DEBUG", "path-to-logs/debug.log")
 """
 
 from __future__ import annotations

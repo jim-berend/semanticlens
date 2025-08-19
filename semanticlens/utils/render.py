@@ -158,7 +158,7 @@ def vis_opaque_img_border(
     data_batch: torch.Tensor
         original images from dataset without FeatureVisualization.preprocess() applied to it
     heatmaps: torch.Tensor
-        ouput heatmap tensor of the CondAttribution call
+        output heatmap tensor of the CondAttribution call
     rf: boolean
         Computes the CRP heatmap for a single neuron and hence restricts the heatmap to the receptive field.
         The amount of cropping is further specified by the 'crop_th' argument.

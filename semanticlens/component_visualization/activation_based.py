@@ -340,7 +340,7 @@ class ActivationComponentVisualizer(AbstractComponentVisualizer):
 
     @torch.no_grad()
     def _run(self, batch_size: int = 64, num_workers: int = 0):
-        """Actuall ActMax-Cache computation/population and caching."""
+        """Actual ActMax-Cache computation/population and caching."""
         dataloader = torch.utils.data.DataLoader(
             self.dataset,
             batch_size=batch_size,
@@ -412,7 +412,7 @@ class ActivationComponentVisualizer(AbstractComponentVisualizer):
         fm.to(self.device)
 
         def pil_list_collate(batch):
-            """We apply the FM transformation (via fm.preprocess) lazy, thus the dataset_fm returns PILs and a special collate implemenation is needed."""
+            """We apply the FM transformation (via fm.preprocess) lazy, thus the dataset_fm returns PILs and a special collate implementation is needed."""
             if isinstance(batch[0], (tuple, list)):
                 return [item[0] for item in batch]
             return list(batch)
@@ -539,7 +539,7 @@ class ActivationComponentVisualizer(AbstractComponentVisualizer):
             print(f"Saved visualization to {fpath}")
         elif fname:
             logger.warning(
-                f"Failed to save visualization to {fpath} caching is not enabled in the ComponentVisualizer (`cv.caching: False`)"
+                "Failed to save visualization. Caching is not enabled in the ComponentVisualizer (`cv.caching: False`)"
             )
 
     def _check_layer_name(self, layer_name):

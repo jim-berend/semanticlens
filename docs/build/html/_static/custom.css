@@ -1,0 +1,76 @@
+/* Custom CSS for SemanticLens documentation */
+
+/* Code blocks with better styling */
+.highlight {
+    border-radius: 8px;
+    border: 1px solid var(--color-background-border);
+}
+
+/* Better spacing for code examples */
+.highlight pre {
+    padding: 1rem;
+}
+
+/* Improve notebook cell styling */
+.nbinput,
+.nboutput {
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+/* Style for the overview image */
+.overview-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 2rem 0;
+}
+
+/* Custom admonitions */
+.admonition {
+    border-radius: 8px;
+    border-left: 4px solid var(--color-brand-primary);
+}
+
+/* Better spacing for API documentation */
+.py.class,
+.py.function,
+.py.method {
+    margin-bottom: 2rem;
+}
+
+/* Improve table styling */
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Style badges in the README */
+.badge {
+    margin: 0.2rem;
+    border-radius: 4px;
+}
+
+/* Navigation improvements */
+.sidebar-drawer {
+    font-size: 0.9rem;
+}
+
+/* Code signature styling */
+.sig-name {
+    font-weight: 600;
+}
+
+/* Parameter list styling */
+.field-list {
+    margin: 1rem 0;
+}
+
+/* Example code styling */
+.doctest {
+    background-color: var(--color-background-secondary);
+    border-radius: 6px;
+    padding: 0.5rem;
+    margin: 1rem 0;
+}

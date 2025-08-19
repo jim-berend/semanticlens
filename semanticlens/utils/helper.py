@@ -35,7 +35,7 @@ def to_transforms_compose(instance: transforms._presets.ImageClassification) -> 
     )
 
 
-def get_unnormalization_transform(
+def get_denormalization_transform(
     mean: torch.Tensor | list[float] = torch.tensor([0.485, 0.456, 0.406]),
     std: torch.Tensor | list[float] = torch.tensor([0.229, 0.224, 0.225]),
 ) -> torch.nn.Module:

@@ -72,7 +72,7 @@ class AbstractComponentVisualizer(ABC):
         Returns
         -------
         dict[str, torch.Tensor]
-            A dictionary mapping layer names to their corresponding component embedings.
+            A dictionary mapping layer names to their corresponding component embeddings.
 
         Raises
         ------

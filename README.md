@@ -13,9 +13,6 @@
   <a href="https://www.nature.com/articles/s42256-025-01084-w">
     <img  src="https://img.shields.io/static/v1?label=Nature&message=Machine%20Intelligence&color=green">
   </a>
-  <a href="https://doi.org/10.5281/zenodo.15233581">
-    <img alt="DOI" src="https://zenodo.org/badge/DOI/10.5281/zenodo.15233581.svg">
-  </a>
   <a href="https://pypi.org/project/semanticlens/">
     <img alt="pypi" src="https://img.shields.io/pypi/v/semanticlens">
   </a>
@@ -108,14 +105,14 @@ search_results = lens.text_probing(["cats", "dogs"], aggregated_cpt_db)
 <img  src="https://img.shields.io/badge/Tutorial-Quickstart.ipynb-2881db">
 </a>
 
-Full quickstart guide: [quickstart.ipynb](tutorials/quickstart.ipynb)
+- Full quickstart guide: [quickstart.ipynb](tutorials/quickstart.ipynb)
 
 
 <a href="https://jim-berend.github.io/semanticlens/">
 <img  src="https://img.shields.io/badge/Docs-SemanticLens-ff8c00">
 </a>
 
-Package documentation: [docs](https://jim-berend.github.io/semanticlens/) 
+- Package documentation: [docs](https://jim-berend.github.io/semanticlens/) 
 
 ## Contributing
 

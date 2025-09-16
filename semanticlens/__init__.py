@@ -32,18 +32,15 @@ redundancy_score
 
 from __future__ import annotations
 
-from semanticlens import foundation_models
+from semanticlens import foundation_models, scores, utils
 from semanticlens.lens import Lens
 from semanticlens.scores import clarity_score, polysemanticity_score, redundancy_score
 
-from . import scores
-
 __all__ = [
-    "scores",
-    "ConceptTensor",
     "foundation_models",
+    "scores",
+    "utils",
     "Lens",
-    "label",
     "clarity_score",
     "polysemanticity_score",
     "redundancy_score",

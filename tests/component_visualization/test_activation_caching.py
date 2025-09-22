@@ -26,7 +26,7 @@ class TestActMax:
         act_max.update(acts2, ids2)
 
         # Check final activations (should be sorted descending)
-        assert torch.allclose(act_max.activations[0], torch.tensor([0.9, 0.8, 0.2, 0.1, 0.0]).to(torch.bfloat16))
+        assert torch.allclose(act_max.activations[0], torch.tensor([0.9, 0.8, 0.2, 0.1, float('-inf')]).to(torch.float32))
         assert torch.allclose(act_max.sample_ids[0], torch.tensor([2, 3, 1, 0, -1]))
 
     def test_store_and_load(self, tmp_path):

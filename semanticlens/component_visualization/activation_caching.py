@@ -105,7 +105,7 @@ class ActMax:
         Creates tensors for storing the top activations and their corresponding
         sample IDs based on the number of latents and collection size.
         """
-        self.activations = -torch.zeros(self.n_latents, self.n_collect, dtype=torch.bfloat16)
+        self.activations = torch.full((self.n_latents, self.n_collect), float('-inf'), dtype=torch.float32)
         self.sample_ids = -torch.ones(self.n_latents, self.n_collect, dtype=torch.int64)
         self.is_setup = True
 

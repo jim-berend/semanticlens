@@ -339,3 +339,76 @@ def crop_and_mask_images(data_batch, heatmaps, rf=False, alpha=0.4, vis_th=0.02,
         imgs.append(img.convert("RGB"))
 
     return imgs
+
+def binary_mask_for_crop_and_mask_images(data_batch, heatmaps, rf=False, alpha=0.4, vis_th=0.02, crop_th=0.01, kernel_size=51):
+    """
+    Get mask for crop_and_mask_images.
+
+    This function processes a batch of images by applying Gaussian blur to their
+    corresponding heatmaps and obtaining masks based on the filtered heatmaps (torch.bool).
+
+    Parameters
+    ----------
+    data_batch : list or array-like
+        Batch of input images to be processed.
+    heatmaps : list or array-like
+        Corresponding attention heatmaps for each image in the batch.
+    rf : bool, optional
+        Receptive field flag (currently unused), by default False.
+    alpha : float, optional
+        Alpha blending parameter, must be between [0, 1], by default 0.4.
+    vis_th : float, optional
+        Visibility threshold, must be between [0, 1), by default 0.02.
+    crop_th : float, optional
+        Cropping threshold for determining crop boundaries, must be between [0, 1),
+        by default 0.01.
+    kernel_size : int, optional
+        Size of the Gaussian blur kernel, by default 51.
+
+    Returns
+    -------
+    list
+        List of masks (PIL Images in binary format) for cropping images according to their
+        respective heatmaps.
+
+    Raises
+    ------
+    ValueError
+        If alpha is not between [0, 1].
+    ValueError
+        If vis_th is not between [0, 1).
+    ValueError
+        If crop_th is not between [0, 1).
+
+    Notes
+    -----
+    The function applies Gaussian blur to normalize heatmaps, determines crop
+    boundaries based on the crop threshold.
+    """
+    if alpha > 1 or alpha < 0:
+        raise ValueError("'alpha' must be between [0, 1]")
+    if vis_th >= 1 or vis_th < 0:
+        raise ValueError("'vis_th' must be between [0, 1)")
+    if crop_th >= 1 or crop_th < 0:
+        raise ValueError("'crop_th' must be between [0, 1)")
+
+    masks = []
+
+    for i in range(len(data_batch)):
+        img = data_batch[i]
+
+        filtered_heat = gaussian_blur(heatmaps[i].unsqueeze(0), kernel_size=kernel_size)[0]
+        filtered_heat = filtered_heat.abs() / (filtered_heat.abs().max())
+
+        # Apply cropping based on the heatmap
+        row1, row2, col1, col2 = _get_square_crop_box(filtered_heat, crop_th)
+
+        # Create 2D mask
+        mask = torch.zeros(img.shape[-2:], dtype=torch.bool)
+        mask[row1:row2, col1:col2] = True
+
+        # convert to PIL image
+        mask = Image.fromarray(mask.cpu().numpy())
+        masks.append(mask)
+
+    return masks
